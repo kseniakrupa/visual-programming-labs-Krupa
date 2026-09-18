@@ -24,6 +24,10 @@
     </bpmn:task>
     <bpmn:task id="Task_CreateDraft" name="Создать черновик брони">
       <bpmn:incoming>Flow_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_CheckGuest</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_CheckGuest" name="Проверить данные гостя">
+      <bpmn:incoming>Flow_CheckGuest</bpmn:incoming>
       <bpmn:outgoing>Flow_3</bpmn:outgoing>
     </bpmn:task>
     <bpmn:parallelGateway id="Gateway_Parallel" name="Параллельно">
@@ -69,7 +73,8 @@
     <bpmn:sequenceFlow id="Flow_No" name="Нет" sourceRef="Gateway_Available" targetRef="Task_Offer"/>
     <bpmn:sequenceFlow id="Flow_Yes" name="Да" sourceRef="Gateway_Available" targetRef="Task_CreateDraft"/>
     <bpmn:sequenceFlow id="Flow_Back" sourceRef="Task_Offer" targetRef="Task_Check"/>
-    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_CreateDraft" targetRef="Gateway_Parallel"/>
+    <bpmn:sequenceFlow id="Flow_CheckGuest" sourceRef="Task_CreateDraft" targetRef="Task_CheckGuest"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_CheckGuest" targetRef="Gateway_Parallel"/>
     <bpmn:sequenceFlow id="Flow_Mail" sourceRef="Gateway_Parallel" targetRef="Task_SendMail"/>
     <bpmn:sequenceFlow id="Flow_Manager" sourceRef="Gateway_Parallel" targetRef="Task_NotifyManager"/>
     <bpmn:sequenceFlow id="Flow_Mail2" sourceRef="Task_SendMail" targetRef="Gateway_ParallelJoin"/>
@@ -97,32 +102,35 @@
       <bpmndi:BPMNShape id="Task_CreateDraft_di" bpmnElement="Task_CreateDraft">
         <dc:Bounds x="510" y="160" width="100" height="80"/>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckGuest_di" bpmnElement="Task_CheckGuest">
+        <dc:Bounds x="660" y="160" width="100" height="80"/>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Parallel_di" bpmnElement="Gateway_Parallel">
-        <dc:Bounds x="665" y="175" width="50" height="50"/>
+        <dc:Bounds x="815" y="175" width="50" height="50"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SendMail_di" bpmnElement="Task_SendMail">
-        <dc:Bounds x="770" y="80" width="100" height="80"/>
+        <dc:Bounds x="920" y="80" width="100" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_NotifyManager_di" bpmnElement="Task_NotifyManager">
-        <dc:Bounds x="770" y="240" width="100" height="80"/>
+        <dc:Bounds x="920" y="240" width="100" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_ParallelJoin_di" bpmnElement="Gateway_ParallelJoin">
-        <dc:Bounds x="925" y="175" width="50" height="50"/>
+        <dc:Bounds x="1075" y="175" width="50" height="50"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Paid_di" bpmnElement="Gateway_Paid" isMarkerVisible="true">
-        <dc:Bounds x="1030" y="175" width="50" height="50"/>
+        <dc:Bounds x="1180" y="175" width="50" height="50"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Cancel_di" bpmnElement="Task_Cancel">
-        <dc:Bounds x="1025" y="300" width="100" height="80"/>
+        <dc:Bounds x="1175" y="300" width="100" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Confirm_di" bpmnElement="Task_Confirm">
-        <dc:Bounds x="1135" y="160" width="100" height="80"/>
+        <dc:Bounds x="1285" y="160" width="100" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Success_di" bpmnElement="EndEvent_Success">
-        <dc:Bounds x="1290" y="182" width="36" height="36"/>
+        <dc:Bounds x="1440" y="182" width="36" height="36"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Cancel_di" bpmnElement="EndEvent_Cancel">
-        <dc:Bounds x="1185" y="322" width="36" height="36"/>
+        <dc:Bounds x="1335" y="322" width="36" height="36"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
@@ -146,50 +154,54 @@
         <di:waypoint x="300" y="340"/>
         <di:waypoint x="300" y="240"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+      <bpmndi:BPMNEdge id="Flow_CheckGuest_di" bpmnElement="Flow_CheckGuest">
         <di:waypoint x="610" y="200"/>
-        <di:waypoint x="665" y="200"/>
+        <di:waypoint x="660" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="760" y="200"/>
+        <di:waypoint x="815" y="200"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Mail_di" bpmnElement="Flow_Mail">
-        <di:waypoint x="690" y="175"/>
-        <di:waypoint x="690" y="120"/>
-        <di:waypoint x="770" y="120"/>
+        <di:waypoint x="840" y="175"/>
+        <di:waypoint x="840" y="120"/>
+        <di:waypoint x="920" y="120"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Manager_di" bpmnElement="Flow_Manager">
-        <di:waypoint x="690" y="225"/>
-        <di:waypoint x="690" y="280"/>
-        <di:waypoint x="770" y="280"/>
+        <di:waypoint x="840" y="225"/>
+        <di:waypoint x="840" y="280"/>
+        <di:waypoint x="920" y="280"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Mail2_di" bpmnElement="Flow_Mail2">
-        <di:waypoint x="870" y="120"/>
-        <di:waypoint x="950" y="120"/>
-        <di:waypoint x="950" y="175"/>
+        <di:waypoint x="1020" y="120"/>
+        <di:waypoint x="1100" y="120"/>
+        <di:waypoint x="1100" y="175"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Manager2_di" bpmnElement="Flow_Manager2">
-        <di:waypoint x="870" y="280"/>
-        <di:waypoint x="950" y="280"/>
-        <di:waypoint x="950" y="225"/>
+        <di:waypoint x="1020" y="280"/>
+        <di:waypoint x="1100" y="280"/>
+        <di:waypoint x="1100" y="225"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
-        <di:waypoint x="975" y="200"/>
-        <di:waypoint x="1030" y="200"/>
+        <di:waypoint x="1125" y="200"/>
+        <di:waypoint x="1180" y="200"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_PaidYes_di" bpmnElement="Flow_PaidYes">
-        <di:waypoint x="1080" y="200"/>
-        <di:waypoint x="1135" y="200"/>
+        <di:waypoint x="1230" y="200"/>
+        <di:waypoint x="1285" y="200"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_PaidNo_di" bpmnElement="Flow_PaidNo">
-        <di:waypoint x="1055" y="225"/>
-        <di:waypoint x="1055" y="300"/>
-        <di:waypoint x="1075" y="300"/>
+        <di:waypoint x="1205" y="225"/>
+        <di:waypoint x="1205" y="300"/>
+        <di:waypoint x="1225" y="300"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ConfirmEnd_di" bpmnElement="Flow_ConfirmEnd">
-        <di:waypoint x="1235" y="200"/>
-        <di:waypoint x="1290" y="200"/>
+        <di:waypoint x="1385" y="200"/>
+        <di:waypoint x="1440" y="200"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_CancelEnd_di" bpmnElement="Flow_CancelEnd">
-        <di:waypoint x="1125" y="340"/>
-        <di:waypoint x="1185" y="340"/>
+        <di:waypoint x="1275" y="340"/>
+        <di:waypoint x="1335" y="340"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
