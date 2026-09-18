@@ -6,6 +6,7 @@ sequenceDiagram
     participant Site as Система бронирования
     participant Pay as Платёжный шлюз
     participant Mail as Email/SMS-сервис
+    participant Mgr as Менеджер бронирования
 
     Guest->>Site: Запрос на бронь (даты, гости, тип номера)
     Site->>Site: Проверка доступности
@@ -13,6 +14,7 @@ sequenceDiagram
         Site-->>Guest: Показать варианты и цены
         Guest->>Site: Выбор номера и данные гостя
         Site->>Pay: Запрос оплаты
+        Site->>Mgr: Уведомить о новой заявке
         Pay-->>Site: Результат транзакции
         alt Оплата прошла
             Site->>Mail: Отправить подтверждение
@@ -24,3 +26,4 @@ sequenceDiagram
     else Номер недоступен
         Site-->>Guest: Предложить альтернативные даты
     end
+```
