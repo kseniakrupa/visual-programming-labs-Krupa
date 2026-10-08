@@ -1,0 +1,324 @@
+[
+    {
+        "id": "tab13",
+        "type": "tab",
+        "label": "13 · REST CRUD (ачивка 5) (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f13_note",
+        "type": "comment",
+        "z": "tab13",
+        "name": "Ачивка №5 — REST+ полный CRUD · ИИ-241",
+        "info": "Сущность task, два поля: title (string) и done (boolean). Хранение — flow context (переменная krupa_tasks). Реализованы GET /api/tasks, GET /api/tasks/:id, POST /api/tasks, PATCH /api/tasks/:id, DELETE /api/tasks/:id со статусами 200/201/400/404. Inject «сидировать» наполняет контекст тестовыми данными после редеплоя.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f13_seed_inject",
+        "type": "inject",
+        "z": "tab13",
+        "name": "inject: сидировать задачи",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.3,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f13_seed_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_seed_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: начальные данные",
+        "func": "// Наполняем flow context стартовым набором, если он пуст.\nconst existing = flow.get(\"krupa_tasks\");\n\nif (Array.isArray(existing) && existing.length > 0) {\n    return null;                    // не перетираем уже созданные задачи\n}\n\nflow.set(\"krupa_tasks\", [\n    { id: 1, title: \"Прочитать методичку по Node-RED\", done: true,  createdAt: \"2026-01-01T09:00:00.000Z\" },\n    { id: 2, title: \"Собрать поток inject → debug\",    done: true,  createdAt: \"2026-01-01T09:10:00.000Z\" },\n    { id: 3, title: \"Сделать CRUD на http in/response\", done: false, createdAt: \"2026-01-01T09:20:00.000Z\" }\n]);\n\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"flow context krupa_tasks проинициализирован\",\n    count: 3\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f13_seed_dbg"
+            ]
+        ]
+    },
+    {
+        "id": "f13_seed_dbg",
+        "type": "debug",
+        "z": "tab13",
+        "name": "Debug: сид контекста",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f13_get_all_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "GET /api/tasks",
+        "url": "/api/tasks",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 320,
+        "wires": [
+            [
+                "f13_get_all_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_all_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: список задач",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst q = msg.req.query || {};\n\nlet result = tasks;\nif (q.done !== undefined) {\n    if (q.done !== \"true\" && q.done !== \"false\") {\n        return send(msg, 400, badRequest(\"Параметр done должен быть true или false\", { received: q.done }));\n    }\n    const wanted = q.done === \"true\";\n    result = result.filter(function (t) { return t.done === wanted; });\n}\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    total: tasks.length,\n    count: result.length,\n    tasks: result\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 320,
+        "wires": [
+            [
+                "f13_get_all_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_all_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response GET /api/tasks",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "f13_get_one_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "GET /api/tasks/:id",
+        "url": "/api/tasks/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 460,
+        "wires": [
+            [
+                "f13_get_one_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_one_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: задача по id",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst task = tasks.find(function (t) { return t.id === id; });\nif (!task) {\n    return send(msg, 404, notFound(id));\n}\n\nreturn send(msg, 200, { student: \"Крупа Ксения (ИИ-241)\", lab: 2, task: task });",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 460,
+        "wires": [
+            [
+                "f13_get_one_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_one_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response GET /api/tasks/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f13_post_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "POST /api/tasks",
+        "url": "/api/tasks",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 600,
+        "wires": [
+            [
+                "f13_post_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_post_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: создать задачу",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst body = msg.payload;\n\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst titleError = validateTitle(body.title);\nif (titleError) {\n    return send(msg, 400, badRequest(titleError, { received: body.title }));\n}\n\nlet done = false;\nif (body.done !== undefined) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    done = body.done;\n}\n\nlet maxId = 0;\nfor (const t of tasks) {\n    if (t.id > maxId) { maxId = t.id; }\n}\n\nconst task = {\n    id: maxId + 1,\n    title: body.title.trim(),\n    done: done,\n    createdAt: new Date().toISOString()\n};\n\ntasks.push(task);\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 201, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"Задача создана\",\n    task: task,\n    total: tasks.length\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 600,
+        "wires": [
+            [
+                "f13_post_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_post_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response POST /api/tasks",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "f13_patch_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "PATCH /api/tasks/:id",
+        "url": "/api/tasks/:id",
+        "method": "patch",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 740,
+        "wires": [
+            [
+                "f13_patch_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_patch_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: изменить задачу",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst body = msg.payload;\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst hasTitle = body.title !== undefined;\nconst hasDone = body.done !== undefined;\n\nif (!hasTitle && !hasDone) {\n    return send(msg, 400, badRequest(\"Нужно передать хотя бы одно поле: title или done\"));\n}\n\nconst updated = Object.assign({}, tasks[index]);\n\nif (hasTitle) {\n    const titleError = validateTitle(body.title);\n    if (titleError) {\n        return send(msg, 400, badRequest(titleError, { received: body.title }));\n    }\n    updated.title = body.title.trim();\n}\n\nif (hasDone) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    updated.done = body.done;\n}\n\nupdated.updatedAt = new Date().toISOString();\ntasks[index] = updated;\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"Задача обновлена\",\n    task: updated\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 740,
+        "wires": [
+            [
+                "f13_patch_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_patch_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response PATCH /api/tasks/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "f13_delete_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "DELETE /api/tasks/:id",
+        "url": "/api/tasks/:id",
+        "method": "delete",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "f13_delete_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_delete_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: удалить задачу",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst removed = tasks.splice(index, 1)[0];\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"Задача удалена\",\n    deleted: removed,\n    total: tasks.length\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 880,
+        "wires": [
+            [
+                "f13_delete_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_delete_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response DELETE /api/tasks/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 880,
+        "wires": []
+    }
+]
