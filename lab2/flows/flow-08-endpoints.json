@@ -1,0 +1,212 @@
+[
+    {
+        "id": "tab08",
+        "type": "tab",
+        "label": "08 · GET endpoints",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f08_note",
+        "type": "comment",
+        "z": "tab08",
+        "name": "2.8 GET-эндпоинты",
+        "info": "Четыре пары http in + http response. /api/text — plain text, /api/info — JSON с двумя полями, /api/items — query params (limit, category) с ошибкой 400, /api/items/:id — path param с ошибкой 400/404.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f08_text_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/text",
+        "url": "/api/text",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f08_text_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_text_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: простой текст",
+        "func": "msg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"text/plain; charset=utf-8\" };\nmsg.payload = \"Крупа Ксения | lab2 (Node-RED) | GET /api/text отвечает простым текстом\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 160,
+        "wires": [
+            [
+                "f08_text_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_text_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/text",
+        "statusCode": "",
+        "headers": {},
+        "x": 720,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f08_info_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/info",
+        "url": "/api/info",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "f08_info_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_info_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: JSON с двумя полями",
+        "func": "msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 280,
+        "wires": [
+            [
+                "f08_info_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_info_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/info",
+        "statusCode": "",
+        "headers": {},
+        "x": 720,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f08_items_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/items?limit=&category=",
+        "url": "/api/items",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 400,
+        "wires": [
+            [
+                "f08_items_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_items_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: query params + 400",
+        "func": "// Каталог товаров (в реальном проекте — БД или файл).\nconst items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst q = msg.req.query || {};\nlet limit = items.length;\n\nif (q.limit !== undefined) {\n    limit = Number(q.limit);\n    if (!Number.isInteger(limit) || limit < 1 || limit > 5) {\n        msg.statusCode = 400;\n        msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n        msg.payload = {\n            error: \"Bad Request\",\n            message: \"Параметр limit должен быть целым числом от 1 до 5\",\n            received: q.limit,\n            student: \"Крупа Ксения\"\n        };\n        return msg;\n    }\n}\n\nlet result = items;\nif (q.category !== undefined) {\n    result = result.filter(function (i) { return i.category === q.category; });\n}\nresult = result.slice(0, limit);\n\nmsg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    appliedLimit: limit,\n    appliedCategory: q.category || null,\n    count: result.length,\n    items: result\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 400,
+        "wires": [
+            [
+                "f08_items_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_items_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/items",
+        "statusCode": "",
+        "headers": {},
+        "x": 790,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "f08_item_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/items/:id",
+        "url": "/api/items/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 560,
+        "wires": [
+            [
+                "f08_item_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_item_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: path param + 400/404",
+        "func": "const items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst raw = msg.req.params.id;\nconst id = Number(raw);\n\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n\nif (!Number.isInteger(id)) {\n    msg.statusCode = 400;\n    msg.payload = {\n        error: \"Bad Request\",\n        message: \"id должен быть целым числом\",\n        received: raw,\n        student: \"Крупа Ксения\"\n    };\n    return msg;\n}\n\nconst item = items.find(function (i) { return i.id === id; });\n\nif (!item) {\n    msg.statusCode = 404;\n    msg.payload = {\n        error: \"Not Found\",\n        message: \"Товар с id=\" + id + \" не найден\",\n        availableIds: items.map(function (i) { return i.id; }),\n        student: \"Крупа Ксения\"\n    };\n    return msg;\n}\n\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    item: item\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 560,
+        "wires": [
+            [
+                "f08_item_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_item_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/items/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 760,
+        "y": 560,
+        "wires": []
+    }
+]
