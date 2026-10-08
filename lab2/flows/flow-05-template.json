@@ -1,0 +1,83 @@
+[
+    {
+        "id": "tab05",
+        "type": "tab",
+        "label": "05 · template (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f05_note",
+        "type": "comment",
+        "z": "tab05",
+        "name": "2.5 Template node · ИИ-241",
+        "info": "Inject отдаёт объект с тремя полями. Mustache-шаблон собирает из него JSON, Output = parsed JSON, поэтому в Debug видно уже объект, а не строку.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f05_inject",
+        "type": "inject",
+        "z": "tab05",
+        "name": "inject: объект с 3 полями",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"student\":\"Крупа Ксения (ИИ-241)\",\"lab\":2,\"sensor\":\"temperature\",\"value\":27.4,\"unit\":\"C\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f05_template"
+            ]
+        ]
+    },
+    {
+        "id": "f05_template",
+        "type": "template",
+        "z": "tab05",
+        "name": "template: Mustache → JSON",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n  \"student\": \"{{payload.student}}\",\n  \"lab\": {{payload.lab}},\n  \"topic\": \"lab2/krupa-ii241/template\",\n  \"measurement\": {\n    \"sensor\": \"{{payload.sensor}}\",\n    \"value\": {{payload.value}},\n    \"unit\": \"{{payload.unit}}\"\n  },\n  \"summary\": \"{{payload.sensor}}: {{payload.value}} {{payload.unit}} у студента {{payload.student}}\"\n}",
+        "output": "json",
+        "x": 560,
+        "y": 140,
+        "wires": [
+            [
+                "f05_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f05_debug",
+        "type": "debug",
+        "z": "tab05",
+        "name": "Debug: собранный JSON",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 140,
+        "wires": []
+    }
+]
