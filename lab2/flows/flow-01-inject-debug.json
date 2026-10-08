@@ -1,0 +1,69 @@
+[
+    {
+        "id": "tab01",
+        "type": "tab",
+        "label": "01 · inject → debug (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f01_note",
+        "type": "comment",
+        "z": "tab01",
+        "name": "2.1 inject → debug · ИИ-241",
+        "info": "Inject раз в 5 секунд кладёт строку с фамилией в msg.payload и lab2/krupa-ii241/basic в msg.topic. Debug настроен на complete msg object, поэтому в панели Debug видны payload, topic и _msgid.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f01_inject",
+        "type": "inject",
+        "z": "tab01",
+        "name": "Каждые 5 сек: Крупа Ксения (ИИ-241)",
+        "props": [
+            {
+                "p": "payload",
+                "v": "Крупа Ксения (ИИ-241)",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "v": "lab2/krupa-ii241/basic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 140,
+        "wires": [
+            [
+                "f01_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f01_debug",
+        "type": "debug",
+        "z": "tab01",
+        "name": "Debug: complete msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 140,
+        "wires": []
+    }
+]
