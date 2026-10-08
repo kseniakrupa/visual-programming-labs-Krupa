@@ -1,0 +1,2052 @@
+[
+    {
+        "id": "tab01",
+        "type": "tab",
+        "label": "01 · inject → debug",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f01_note",
+        "type": "comment",
+        "z": "tab01",
+        "name": "2.1 inject → debug",
+        "info": "Inject раз в 5 секунд кладёт строку с фамилией в msg.payload и lab2/krupa/basic в msg.topic. Debug настроен на complete msg object, поэтому в панели Debug видны payload, topic и _msgid.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f01_inject",
+        "type": "inject",
+        "z": "tab01",
+        "name": "Каждые 5 сек: Крупа Ксения",
+        "props": [
+            {
+                "p": "payload",
+                "v": "Крупа Ксения",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "v": "lab2/krupa/basic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 140,
+        "wires": [
+            [
+                "f01_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f01_debug",
+        "type": "debug",
+        "z": "tab01",
+        "name": "Debug: complete msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "tab02",
+        "type": "tab",
+        "label": "02 · function",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f02_note",
+        "type": "comment",
+        "z": "tab02",
+        "name": "2.2 Function node",
+        "info": "Три inject-ноды подают в одну функцию число, строку и объект — чтобы показать разные ветки if/else внутри кода.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f02_inj_num",
+        "type": "inject",
+        "z": "tab02",
+        "name": "inject: число 5",
+        "props": [
+            {
+                "p": "payload",
+                "v": "5",
+                "vt": "num"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f02_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f02_inj_str",
+        "type": "inject",
+        "z": "tab02",
+        "name": "inject: строка",
+        "props": [
+            {
+                "p": "payload",
+                "v": "Крупа Ксения",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "f02_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f02_inj_obj",
+        "type": "inject",
+        "z": "tab02",
+        "name": "inject: объект с оценками",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"student\":\"Крупа Ксения\",\"lab\":2,\"scores\":[5,4,5,3]}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "f02_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f02_fn",
+        "type": "function",
+        "z": "tab02",
+        "name": "function: статистика по payload",
+        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa/function\";\nmsg.student = \"Крупа Ксения\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 200,
+        "wires": [
+            [
+                "f02_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f02_debug",
+        "type": "debug",
+        "z": "tab02",
+        "name": "Debug: результат функции",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "tab03",
+        "type": "tab",
+        "label": "03 · switch",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f03_note",
+        "type": "comment",
+        "z": "tab03",
+        "name": "2.3 Switch node",
+        "info": "Та же функция, что в 2.2. Switch ветвит по msg.payload.avg: правило 1 = avg >= 4, правило 2 = otherwise. Два debug на разные выходы.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f03_inj_high",
+        "type": "inject",
+        "z": "tab03",
+        "name": "inject: avg >= 4 (оценки [5,5,4])",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"student\":\"Крупа Ксения\",\"scores\":[5,5,4]}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f03_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f03_inj_low",
+        "type": "inject",
+        "z": "tab03",
+        "name": "inject: avg < 4 (число 3)",
+        "props": [
+            {
+                "p": "payload",
+                "v": "3",
+                "vt": "num"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "f03_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f03_fn",
+        "type": "function",
+        "z": "tab03",
+        "name": "function: та же логика, что в 2.2",
+        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa/function\";\nmsg.student = \"Крупа Ксения\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 170,
+        "wires": [
+            [
+                "f03_switch"
+            ]
+        ]
+    },
+    {
+        "id": "f03_switch",
+        "type": "switch",
+        "z": "tab03",
+        "name": "switch: payload.avg >= 4 ?",
+        "property": "payload.avg",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "4",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 870,
+        "y": 170,
+        "wires": [
+            [
+                "f03_dbg_pass"
+            ],
+            [
+                "f03_dbg_fail"
+            ]
+        ]
+    },
+    {
+        "id": "f03_dbg_pass",
+        "type": "debug",
+        "z": "tab03",
+        "name": "ВЫХОД 1: avg >= 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f03_dbg_fail",
+        "type": "debug",
+        "z": "tab03",
+        "name": "ВЫХОД 2: otherwise (avg < 4)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "tab04",
+        "type": "tab",
+        "label": "04 · change",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f04_note",
+        "type": "comment",
+        "z": "tab04",
+        "name": "2.4 Change / Set node",
+        "info": "Change-нода перезаписывает topic, добавляет timestamp (текущее время), служебное поле changedBy и собирает новый payload через JSONata.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f04_inject",
+        "type": "inject",
+        "z": "tab04",
+        "name": "inject: исходные данные",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"value\":23.7,\"unit\":\"C\"}",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "v": "lab2/krupa/pre-change",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f04_change"
+            ]
+        ]
+    },
+    {
+        "id": "f04_change",
+        "type": "change",
+        "z": "tab04",
+        "name": "change: topic + timestamp + payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lab2/krupa/change",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "timestamp",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            },
+            {
+                "t": "set",
+                "p": "changedBy",
+                "pt": "msg",
+                "to": "Крупа Ксения",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Крупа Ксения | lab2 | было: \" & $string(payload)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 140,
+        "wires": [
+            [
+                "f04_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f04_debug",
+        "type": "debug",
+        "z": "tab04",
+        "name": "Debug: complete msg после change",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "tab05",
+        "type": "tab",
+        "label": "05 · template",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f05_note",
+        "type": "comment",
+        "z": "tab05",
+        "name": "2.5 Template node",
+        "info": "Inject отдаёт объект с тремя полями. Mustache-шаблон собирает из него JSON, Output = parsed JSON, поэтому в Debug видно уже объект, а не строку.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f05_inject",
+        "type": "inject",
+        "z": "tab05",
+        "name": "inject: объект с 3 полями",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"student\":\"Крупа Ксения\",\"lab\":2,\"sensor\":\"temperature\",\"value\":27.4,\"unit\":\"C\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f05_template"
+            ]
+        ]
+    },
+    {
+        "id": "f05_template",
+        "type": "template",
+        "z": "tab05",
+        "name": "template: Mustache → JSON",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n  \"student\": \"{{payload.student}}\",\n  \"lab\": {{payload.lab}},\n  \"topic\": \"lab2/krupa/template\",\n  \"measurement\": {\n    \"sensor\": \"{{payload.sensor}}\",\n    \"value\": {{payload.value}},\n    \"unit\": \"{{payload.unit}}\"\n  },\n  \"summary\": \"{{payload.sensor}}: {{payload.value}} {{payload.unit}} у студента {{payload.student}}\"\n}",
+        "output": "json",
+        "x": 560,
+        "y": 140,
+        "wires": [
+            [
+                "f05_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f05_debug",
+        "type": "debug",
+        "z": "tab05",
+        "name": "Debug: собранный JSON",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "tab06",
+        "type": "tab",
+        "label": "06 · http request",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f06_note",
+        "type": "comment",
+        "z": "tab06",
+        "name": "2.6 HTTP Request node",
+        "info": "Публичный API без регистрации и токенов. Return = a parsed JSON object, поэтому дальше идёт уже готовый объект.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f06_inject",
+        "type": "inject",
+        "z": "tab06",
+        "name": "inject: запросить шутку",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f06_http"
+            ]
+        ]
+    },
+    {
+        "id": "f06_http",
+        "type": "http request",
+        "z": "tab06",
+        "name": "GET api.chucknorris.io",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.chucknorris.io/jokes/random",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 490,
+        "y": 140,
+        "wires": [
+            [
+                "f06_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f06_debug",
+        "type": "debug",
+        "z": "tab06",
+        "name": "Debug: ответ API (complete msg)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "tab07",
+        "type": "tab",
+        "label": "07 · mqtt",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f07_note",
+        "type": "comment",
+        "z": "tab07",
+        "name": "2.7 MQTT с публичным брокером",
+        "info": "Публичный брокер broker.hivemq.com:1883. Топик student/krupa/lab2/sensor. Inject раз в 5 секунд → случайное значение → publish. Вторая ветка подписана на тот же топик и печатает пришедшее сообщение в Debug.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f07_broker",
+        "type": "mqtt-broker",
+        "name": "HiveMQ public broker",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": ""
+    },
+    {
+        "id": "f07_inj_pub",
+        "type": "inject",
+        "z": "tab07",
+        "name": "inject: раз в 5 сек (публикация)",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f07_fn_rand"
+            ]
+        ]
+    },
+    {
+        "id": "f07_fn_rand",
+        "type": "function",
+        "z": "tab07",
+        "name": "function: случайное значение датчика",
+        "func": "// Готовим «показание датчика» — случайное число 18.0 … 30.0 °C.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"student/krupa/lab2/sensor\";\nmsg.payload = JSON.stringify({\n    student: \"Крупа Ксения\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\",\n    ts: new Date().toISOString()\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 140,
+        "wires": [
+            [
+                "f07_pub"
+            ]
+        ]
+    },
+    {
+        "id": "f07_pub",
+        "type": "mqtt out",
+        "z": "tab07",
+        "name": "mqtt out: publish",
+        "topic": "student/krupa/lab2/sensor",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f07_broker",
+        "x": 780,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "f07_sub",
+        "type": "mqtt in",
+        "z": "tab07",
+        "name": "mqtt in: subscribe",
+        "topic": "student/krupa/lab2/sensor",
+        "qos": "0",
+        "datatype": "utf8",
+        "broker": "f07_broker",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 480,
+        "y": 300,
+        "wires": [
+            [
+                "f07_dbg_sub"
+            ]
+        ]
+    },
+    {
+        "id": "f07_dbg_sub",
+        "type": "debug",
+        "z": "tab07",
+        "name": "Debug: принято из топика",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "tab08",
+        "type": "tab",
+        "label": "08 · GET endpoints",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f08_note",
+        "type": "comment",
+        "z": "tab08",
+        "name": "2.8 GET-эндпоинты",
+        "info": "Четыре пары http in + http response. /api/text — plain text, /api/info — JSON с двумя полями, /api/items — query params (limit, category) с ошибкой 400, /api/items/:id — path param с ошибкой 400/404.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f08_text_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/text",
+        "url": "/api/text",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f08_text_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_text_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: простой текст",
+        "func": "msg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"text/plain; charset=utf-8\" };\nmsg.payload = \"Крупа Ксения | lab2 (Node-RED) | GET /api/text отвечает простым текстом\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 160,
+        "wires": [
+            [
+                "f08_text_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_text_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/text",
+        "statusCode": "",
+        "headers": {},
+        "x": 720,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f08_info_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/info",
+        "url": "/api/info",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "f08_info_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_info_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: JSON с двумя полями",
+        "func": "msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 280,
+        "wires": [
+            [
+                "f08_info_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_info_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/info",
+        "statusCode": "",
+        "headers": {},
+        "x": 720,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f08_items_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/items?limit=&category=",
+        "url": "/api/items",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 400,
+        "wires": [
+            [
+                "f08_items_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_items_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: query params + 400",
+        "func": "// Каталог товаров (в реальном проекте — БД или файл).\nconst items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst q = msg.req.query || {};\nlet limit = items.length;\n\nif (q.limit !== undefined) {\n    limit = Number(q.limit);\n    if (!Number.isInteger(limit) || limit < 1 || limit > 5) {\n        msg.statusCode = 400;\n        msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n        msg.payload = {\n            error: \"Bad Request\",\n            message: \"Параметр limit должен быть целым числом от 1 до 5\",\n            received: q.limit,\n            student: \"Крупа Ксения\"\n        };\n        return msg;\n    }\n}\n\nlet result = items;\nif (q.category !== undefined) {\n    result = result.filter(function (i) { return i.category === q.category; });\n}\nresult = result.slice(0, limit);\n\nmsg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    appliedLimit: limit,\n    appliedCategory: q.category || null,\n    count: result.length,\n    items: result\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 400,
+        "wires": [
+            [
+                "f08_items_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_items_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/items",
+        "statusCode": "",
+        "headers": {},
+        "x": 790,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "f08_item_in",
+        "type": "http in",
+        "z": "tab08",
+        "name": "GET /api/items/:id",
+        "url": "/api/items/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 560,
+        "wires": [
+            [
+                "f08_item_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f08_item_fn",
+        "type": "function",
+        "z": "tab08",
+        "name": "function: path param + 400/404",
+        "func": "const items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst raw = msg.req.params.id;\nconst id = Number(raw);\n\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n\nif (!Number.isInteger(id)) {\n    msg.statusCode = 400;\n    msg.payload = {\n        error: \"Bad Request\",\n        message: \"id должен быть целым числом\",\n        received: raw,\n        student: \"Крупа Ксения\"\n    };\n    return msg;\n}\n\nconst item = items.find(function (i) { return i.id === id; });\n\nif (!item) {\n    msg.statusCode = 404;\n    msg.payload = {\n        error: \"Not Found\",\n        message: \"Товар с id=\" + id + \" не найден\",\n        availableIds: items.map(function (i) { return i.id; }),\n        student: \"Крупа Ксения\"\n    };\n    return msg;\n}\n\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    item: item\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 560,
+        "wires": [
+            [
+                "f08_item_out"
+            ]
+        ]
+    },
+    {
+        "id": "f08_item_out",
+        "type": "http response",
+        "z": "tab08",
+        "name": "response /api/items/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 760,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "tab09",
+        "type": "tab",
+        "label": "09 · dashboard",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f09_note",
+        "type": "comment",
+        "z": "tab09",
+        "name": "2.9 Dashboard: gauge + chart",
+        "info": "Требуется модуль node-red-dashboard. Inject имитирует датчик температуры раз в 2 секунды: показание уходит в gauge и в chart. UI: http://localhost:1880/ui",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f09_ui_tab",
+        "type": "ui_tab",
+        "name": "Датчик (Крупа)",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false,
+        "env": []
+    },
+    {
+        "id": "f09_ui_group",
+        "type": "ui_group",
+        "name": "Показания датчика",
+        "tab": "f09_ui_tab",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f09_inject",
+        "type": "inject",
+        "z": "tab09",
+        "name": "inject: датчик раз в 2 сек",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f09_sensor"
+            ]
+        ]
+    },
+    {
+        "id": "f09_sensor",
+        "type": "function",
+        "z": "tab09",
+        "name": "function: температура 18…30 °C",
+        "func": "// Имитация датчика температуры.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"lab2/krupa/dashboard\";\nmsg.payload = value;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f09_gauge",
+                "f09_chart",
+                "f09_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f09_gauge",
+        "type": "ui_gauge",
+        "z": "tab09",
+        "name": "Gauge: температура",
+        "group": "f09_ui_group",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Температура датчика, °C",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "40",
+        "colors": [
+            "#00B500",
+            "#E6E600",
+            "#CA3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 850,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f09_chart",
+        "type": "ui_chart",
+        "z": "tab09",
+        "name": "Chart: история температуры",
+        "group": "f09_ui_group",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "История температуры, °C",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "нет данных",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "40",
+        "removeOlder": "5",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1F77B4",
+            "#AEC7E8",
+            "#FF7F0E",
+            "#2CA02C",
+            "#98DF8A",
+            "#D62728",
+            "#FF9896",
+            "#9467BD",
+            "#C5B0D5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 880,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f09_debug",
+        "type": "debug",
+        "z": "tab09",
+        "name": "Debug: показания датчика",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "tab10",
+        "type": "tab",
+        "label": "10 · telegram",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f10_note",
+        "type": "comment",
+        "z": "tab10",
+        "name": "2.10 Telegram-бот",
+        "info": "Требуется модуль node-red-contrib-telegrambot. В настройках бота (tvl_lab2_krupa_bot) нужно вставить токен от @BotFather вместо заглушки TOKEN_FROM_BOTFATHER. Команды: /start, /help, /time + echo на любое сообщение.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f10_bot",
+        "type": "telegram bot",
+        "botname": "tvl_lab2_krupa_bot",
+        "usernames": "",
+        "chatids": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false,
+        "token": "TOKEN_FROM_BOTFATHER"
+    },
+    {
+        "id": "f10_cmd_start",
+        "type": "telegram command",
+        "z": "tab10",
+        "name": "/start",
+        "bot": "f10_bot",
+        "command": "/start",
+        "register": true,
+        "language": "",
+        "scope": "default",
+        "description": "Начать работу с ботом",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "f10_fn_start"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_start",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: приветствие",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Привет! Я бот tvl_lab2_krupa_bot.\" + \"\\n\" +\n    \"Студент: Крупа Ксения, лабораторная №2 (Node-RED).\" + \"\\n\" +\n    \"Доступные команды: /start, /help, /time.\" + \"\\n\" +\n    \"На любое другое сообщение отвечу эхом.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_cmd_help",
+        "type": "telegram command",
+        "z": "tab10",
+        "name": "/help",
+        "bot": "f10_bot",
+        "command": "/help",
+        "register": true,
+        "language": "",
+        "scope": "default",
+        "description": "Список команд",
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "f10_fn_help"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_help",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: справка",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Команды бота:\\n/start — приветствие\\n/help — эта справка\\n/time — текущее время сервера\\n\\nЛюбое другое сообщение — echo-ответ.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 240,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_cmd_time",
+        "type": "telegram command",
+        "z": "tab10",
+        "name": "/time",
+        "bot": "f10_bot",
+        "command": "/time",
+        "register": true,
+        "language": "",
+        "scope": "default",
+        "description": "Текущее время сервера",
+        "x": 180,
+        "y": 340,
+        "wires": [
+            [
+                "f10_fn_time"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_time",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: текущее время",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Сейчас на сервере Node-RED: \" + new Date().toLocaleString(\"ru-RU\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 320,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_receiver",
+        "type": "telegram receiver",
+        "z": "tab10",
+        "name": "receiver: все сообщения",
+        "bot": "f10_bot",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 200,
+        "y": 440,
+        "wires": [
+            [
+                "f10_fn_echo",
+                "f10_dbg_raw"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_echo",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: echo (кроме команд)",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nconst text = String(msg.payload.content || \"\");\n\n// Команды уже обработаны нодами telegram command — их не дублируем.\nif (text.trim().startsWith(\"/\")) {\n    return null;\n}\n\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Эхо: \" + text + \"\\n(сообщение получено в \" + new Date().toLocaleTimeString(\"ru-RU\") + \")\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 420,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_dbg_raw",
+        "type": "debug",
+        "z": "tab10",
+        "name": "Debug: входящее сообщение",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "f10_sender",
+        "type": "telegram sender",
+        "z": "tab10",
+        "name": "telegram sender",
+        "bot": "f10_bot",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 830,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "tab11",
+        "type": "tab",
+        "label": "11 · files",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f11_note",
+        "type": "comment",
+        "z": "tab11",
+        "name": "2.11 Чтение и запись файла",
+        "info": "Ветка записи (inject → function → file out) дописывает строку JSON в /data/krupa-lab2-log.jsonl (формат JSON Lines). Ветка чтения (inject → file in → function → debug) разбирает файл и считает статистику. Файл лежит в docker-volume, поэтому данные сохраняются между перезапусками контейнера.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f11_inj_write",
+        "type": "inject",
+        "z": "tab11",
+        "name": "inject: записать показание",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f11_fn_write"
+            ]
+        ]
+    },
+    {
+        "id": "f11_fn_write",
+        "type": "function",
+        "z": "tab11",
+        "name": "function: сформировать запись",
+        "func": "// Готовим одну строку лога — валидный JSON без переводов строк.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.filename = \"/data/krupa-lab2-log.jsonl\";\nmsg.payload = JSON.stringify({\n    ts: new Date().toISOString(),\n    student: \"Крупа Ксения\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\"\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f11_file_out"
+            ]
+        ]
+    },
+    {
+        "id": "f11_file_out",
+        "type": "file",
+        "z": "tab11",
+        "name": "file out (append)",
+        "filename": "/data/krupa-lab2-log.jsonl",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 790,
+        "y": 160,
+        "wires": [
+            [
+                "f11_dbg_write"
+            ]
+        ]
+    },
+    {
+        "id": "f11_dbg_write",
+        "type": "debug",
+        "z": "tab11",
+        "name": "Debug: записано",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f11_inj_read",
+        "type": "inject",
+        "z": "tab11",
+        "name": "inject: прочитать файл",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 360,
+        "wires": [
+            [
+                "f11_file_in"
+            ]
+        ]
+    },
+    {
+        "id": "f11_file_in",
+        "type": "file in",
+        "z": "tab11",
+        "name": "file in (utf8)",
+        "filename": "/data/krupa-lab2-log.jsonl",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 470,
+        "y": 360,
+        "wires": [
+            [
+                "f11_fn_read"
+            ]
+        ]
+    },
+    {
+        "id": "f11_fn_read",
+        "type": "function",
+        "z": "tab11",
+        "name": "function: разобрать и посчитать",
+        "func": "// Файл читается целиком как строка. Разбираем его как JSON Lines.\nconst text = String(msg.payload || \"\").trim();\n\nif (text === \"\") {\n    msg.payload = {\n        student: \"Крупа Ксения\",\n        file: msg.filename,\n        message: \"Файл пуст — сначала нажмите «inject: записать показание»\"\n    };\n    return msg;\n}\n\nconst lines = text.split(/\\r?\\n/).filter(function (l) { return l.trim() !== \"\"; });\n\nconst entries = [];\nfor (const line of lines) {\n    try {\n        entries.push(JSON.parse(line));\n    } catch (e) {\n        // повреждённую строку пропускаем, чтобы не ронять поток\n    }\n}\n\nconst values = entries\n    .map(function (e) { return e.value; })\n    .filter(function (v) { return typeof v === \"number\"; });\n\nlet sum = 0;\nfor (const v of values) {\n    sum += v;\n}\n\nmsg.topic = \"lab2/krupa/files\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    file: msg.filename,\n    linesTotal: lines.length,\n    parsedOk: entries.length,\n    firstEntry: entries.length ? entries[0] : null,\n    lastEntry: entries.length ? entries[entries.length - 1] : null,\n    minValue: values.length ? Math.min.apply(null, values) : null,\n    maxValue: values.length ? Math.max.apply(null, values) : null,\n    avgValue: values.length ? Number((sum / values.length).toFixed(2)) : null\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 360,
+        "wires": [
+            [
+                "f11_dbg_read"
+            ]
+        ]
+    },
+    {
+        "id": "f11_dbg_read",
+        "type": "debug",
+        "z": "tab11",
+        "name": "Debug: содержимое файла + статистика",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1090,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "tab12",
+        "type": "tab",
+        "label": "12 · context",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f12_note",
+        "type": "comment",
+        "z": "tab12",
+        "name": "2.12 Работа с контекстом",
+        "info": "flow context — счётчик, который живёт между сообщениями внутри этого flow. global context — журнал последних 5 значений, доступный из любого flow. environment variables — LAB2_STUDENT и LAB2_LAB, передаются контейнеру через docker run -e.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f12_inj_tick",
+        "type": "inject",
+        "z": "tab12",
+        "name": "inject: тик раз в 3 сек",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f12_fn_counter"
+            ]
+        ]
+    },
+    {
+        "id": "f12_inj_reset",
+        "type": "inject",
+        "z": "tab12",
+        "name": "inject: сбросить счётчик",
+        "props": [
+            {
+                "p": "payload",
+                "v": "reset",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 220,
+        "wires": [
+            [
+                "f12_fn_reset"
+            ]
+        ]
+    },
+    {
+        "id": "f12_fn_counter",
+        "type": "function",
+        "z": "tab12",
+        "name": "function: счётчик + global history + env",
+        "func": "// --- flow context: счётчик, живущий между сообщениями -----------------\nlet counter = flow.get(\"krupa_counter\");\nif (typeof counter !== \"number\") {\n    counter = 0;\n}\ncounter = counter + 1;\nflow.set(\"krupa_counter\", counter);\n\n// --- global context: журнал последних 5 тиков -------------------------\nlet history = global.get(\"krupa_history\");\nif (!Array.isArray(history)) {\n    history = [];\n}\nhistory.push({ n: counter, at: new Date().toISOString(), value: msg.payload });\nif (history.length > 5) {\n    history = history.slice(history.length - 5);\n}\nglobal.set(\"krupa_history\", history);\n\n// --- environment variables -------------------------------------------\nconst envStudent = env.get(\"LAB2_STUDENT\") || \"(переменная не задана)\";\nconst envLab = env.get(\"LAB2_LAB\") || \"(переменная не задана)\";\n\nmsg.topic = \"lab2/krupa/context\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    counter: counter,\n    counterStorage: \"flow context (node: f12_fn_counter)\",\n    historyLength: history.length,\n    history: history,\n    environment: {\n        LAB2_STUDENT: envStudent,\n        LAB2_LAB: envLab\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "f12_dbg"
+            ]
+        ]
+    },
+    {
+        "id": "f12_fn_reset",
+        "type": "function",
+        "z": "tab12",
+        "name": "function: сброс счётчика",
+        "func": "// Сбрасываем flow context и чистим global context.\nflow.set(\"krupa_counter\", 0);\nglobal.set(\"krupa_history\", []);\n\nmsg.topic = \"lab2/krupa/context\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    action: \"reset\",\n    counter: 0,\n    message: \"Счётчик в flow context сброшен в 0, global history очищена\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 260,
+        "wires": [
+            [
+                "f12_dbg_reset"
+            ]
+        ]
+    },
+    {
+        "id": "f12_dbg",
+        "type": "debug",
+        "z": "tab12",
+        "name": "Debug: контекст",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f12_dbg_reset",
+        "type": "debug",
+        "z": "tab12",
+        "name": "Debug: сброс",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "tab13",
+        "type": "tab",
+        "label": "13 · REST CRUD (ачивка 5)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f13_note",
+        "type": "comment",
+        "z": "tab13",
+        "name": "Ачивка №5 — REST+ полный CRUD",
+        "info": "Сущность task, два поля: title (string) и done (boolean). Хранение — flow context (переменная krupa_tasks). Реализованы GET /api/tasks, GET /api/tasks/:id, POST /api/tasks, PATCH /api/tasks/:id, DELETE /api/tasks/:id со статусами 200/201/400/404. Inject «сидировать» наполняет контекст тестовыми данными после редеплоя.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f13_seed_inject",
+        "type": "inject",
+        "z": "tab13",
+        "name": "inject: сидировать задачи",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.3,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f13_seed_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_seed_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: начальные данные",
+        "func": "// Наполняем flow context стартовым набором, если он пуст.\nconst existing = flow.get(\"krupa_tasks\");\n\nif (Array.isArray(existing) && existing.length > 0) {\n    return null;                    // не перетираем уже созданные задачи\n}\n\nflow.set(\"krupa_tasks\", [\n    { id: 1, title: \"Прочитать методичку по Node-RED\", done: true,  createdAt: \"2026-01-01T09:00:00.000Z\" },\n    { id: 2, title: \"Собрать поток inject → debug\",    done: true,  createdAt: \"2026-01-01T09:10:00.000Z\" },\n    { id: 3, title: \"Сделать CRUD на http in/response\", done: false, createdAt: \"2026-01-01T09:20:00.000Z\" }\n]);\n\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    message: \"flow context krupa_tasks проинициализирован\",\n    count: 3\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f13_seed_dbg"
+            ]
+        ]
+    },
+    {
+        "id": "f13_seed_dbg",
+        "type": "debug",
+        "z": "tab13",
+        "name": "Debug: сид контекста",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f13_get_all_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "GET /api/tasks",
+        "url": "/api/tasks",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 320,
+        "wires": [
+            [
+                "f13_get_all_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_all_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: список задач",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst q = msg.req.query || {};\n\nlet result = tasks;\nif (q.done !== undefined) {\n    if (q.done !== \"true\" && q.done !== \"false\") {\n        return send(msg, 400, badRequest(\"Параметр done должен быть true или false\", { received: q.done }));\n    }\n    const wanted = q.done === \"true\";\n    result = result.filter(function (t) { return t.done === wanted; });\n}\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    total: tasks.length,\n    count: result.length,\n    tasks: result\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 320,
+        "wires": [
+            [
+                "f13_get_all_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_all_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response GET /api/tasks",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "f13_get_one_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "GET /api/tasks/:id",
+        "url": "/api/tasks/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 460,
+        "wires": [
+            [
+                "f13_get_one_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_one_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: задача по id",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst task = tasks.find(function (t) { return t.id === id; });\nif (!task) {\n    return send(msg, 404, notFound(id));\n}\n\nreturn send(msg, 200, { student: \"Крупа Ксения\", lab: 2, task: task });",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 460,
+        "wires": [
+            [
+                "f13_get_one_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_get_one_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response GET /api/tasks/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f13_post_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "POST /api/tasks",
+        "url": "/api/tasks",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 600,
+        "wires": [
+            [
+                "f13_post_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_post_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: создать задачу",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst body = msg.payload;\n\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst titleError = validateTitle(body.title);\nif (titleError) {\n    return send(msg, 400, badRequest(titleError, { received: body.title }));\n}\n\nlet done = false;\nif (body.done !== undefined) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    done = body.done;\n}\n\nlet maxId = 0;\nfor (const t of tasks) {\n    if (t.id > maxId) { maxId = t.id; }\n}\n\nconst task = {\n    id: maxId + 1,\n    title: body.title.trim(),\n    done: done,\n    createdAt: new Date().toISOString()\n};\n\ntasks.push(task);\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 201, {\n    student: \"Крупа Ксения\",\n    message: \"Задача создана\",\n    task: task,\n    total: tasks.length\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 600,
+        "wires": [
+            [
+                "f13_post_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_post_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response POST /api/tasks",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "f13_patch_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "PATCH /api/tasks/:id",
+        "url": "/api/tasks/:id",
+        "method": "patch",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 740,
+        "wires": [
+            [
+                "f13_patch_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_patch_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: изменить задачу",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst body = msg.payload;\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst hasTitle = body.title !== undefined;\nconst hasDone = body.done !== undefined;\n\nif (!hasTitle && !hasDone) {\n    return send(msg, 400, badRequest(\"Нужно передать хотя бы одно поле: title или done\"));\n}\n\nconst updated = Object.assign({}, tasks[index]);\n\nif (hasTitle) {\n    const titleError = validateTitle(body.title);\n    if (titleError) {\n        return send(msg, 400, badRequest(titleError, { received: body.title }));\n    }\n    updated.title = body.title.trim();\n}\n\nif (hasDone) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    updated.done = body.done;\n}\n\nupdated.updatedAt = new Date().toISOString();\ntasks[index] = updated;\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения\",\n    message: \"Задача обновлена\",\n    task: updated\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 740,
+        "wires": [
+            [
+                "f13_patch_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_patch_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response PATCH /api/tasks/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "f13_delete_in",
+        "type": "http in",
+        "z": "tab13",
+        "name": "DELETE /api/tasks/:id",
+        "url": "/api/tasks/:id",
+        "method": "delete",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "f13_delete_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f13_delete_fn",
+        "type": "function",
+        "z": "tab13",
+        "name": "function: удалить задачу",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst removed = tasks.splice(index, 1)[0];\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения\",\n    message: \"Задача удалена\",\n    deleted: removed,\n    total: tasks.length\n});",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 880,
+        "wires": [
+            [
+                "f13_delete_out"
+            ]
+        ]
+    },
+    {
+        "id": "f13_delete_out",
+        "type": "http response",
+        "z": "tab13",
+        "name": "response DELETE /api/tasks/:id",
+        "statusCode": "",
+        "headers": {},
+        "x": 800,
+        "y": 880,
+        "wires": []
+    }
+]
