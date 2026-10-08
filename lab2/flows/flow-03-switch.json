@@ -1,0 +1,159 @@
+[
+    {
+        "id": "tab03",
+        "type": "tab",
+        "label": "03 · switch (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f03_note",
+        "type": "comment",
+        "z": "tab03",
+        "name": "2.3 Switch node · ИИ-241",
+        "info": "Та же функция, что в 2.2. Switch ветвит по msg.payload.avg: правило 1 = avg >= 4, правило 2 = otherwise. Два debug на разные выходы.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f03_inj_high",
+        "type": "inject",
+        "z": "tab03",
+        "name": "inject: avg >= 4 (оценки [5,5,4])",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"student\":\"Крупа Ксения (ИИ-241)\",\"scores\":[5,5,4]}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f03_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f03_inj_low",
+        "type": "inject",
+        "z": "tab03",
+        "name": "inject: avg < 4 (число 3)",
+        "props": [
+            {
+                "p": "payload",
+                "v": "3",
+                "vt": "num"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "f03_fn"
+            ]
+        ]
+    },
+    {
+        "id": "f03_fn",
+        "type": "function",
+        "z": "tab03",
+        "name": "function: та же логика, что в 2.2",
+        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa-ii241/function\";\nmsg.student = \"Крупа Ксения (ИИ-241)\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 170,
+        "wires": [
+            [
+                "f03_switch"
+            ]
+        ]
+    },
+    {
+        "id": "f03_switch",
+        "type": "switch",
+        "z": "tab03",
+        "name": "switch: payload.avg >= 4 ?",
+        "property": "payload.avg",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "4",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 870,
+        "y": 170,
+        "wires": [
+            [
+                "f03_dbg_pass"
+            ],
+            [
+                "f03_dbg_fail"
+            ]
+        ]
+    },
+    {
+        "id": "f03_dbg_pass",
+        "type": "debug",
+        "z": "tab03",
+        "name": "ВЫХОД 1: avg >= 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f03_dbg_fail",
+        "type": "debug",
+        "z": "tab03",
+        "name": "ВЫХОД 2: otherwise (avg < 4)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 220,
+        "wires": []
+    }
+]
