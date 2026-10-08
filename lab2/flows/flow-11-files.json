@@ -1,0 +1,185 @@
+[
+    {
+        "id": "tab11",
+        "type": "tab",
+        "label": "11 · files",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f11_note",
+        "type": "comment",
+        "z": "tab11",
+        "name": "2.11 Чтение и запись файла",
+        "info": "Ветка записи (inject → function → file out) дописывает строку JSON в /data/krupa-lab2-log.jsonl (формат JSON Lines). Ветка чтения (inject → file in → function → debug) разбирает файл и считает статистику. Файл лежит в docker-volume, поэтому данные сохраняются между перезапусками контейнера.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f11_inj_write",
+        "type": "inject",
+        "z": "tab11",
+        "name": "inject: записать показание",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f11_fn_write"
+            ]
+        ]
+    },
+    {
+        "id": "f11_fn_write",
+        "type": "function",
+        "z": "tab11",
+        "name": "function: сформировать запись",
+        "func": "// Готовим одну строку лога — валидный JSON без переводов строк.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.filename = \"/data/krupa-lab2-log.jsonl\";\nmsg.payload = JSON.stringify({\n    ts: new Date().toISOString(),\n    student: \"Крупа Ксения\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\"\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f11_file_out"
+            ]
+        ]
+    },
+    {
+        "id": "f11_file_out",
+        "type": "file",
+        "z": "tab11",
+        "name": "file out (append)",
+        "filename": "/data/krupa-lab2-log.jsonl",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 790,
+        "y": 160,
+        "wires": [
+            [
+                "f11_dbg_write"
+            ]
+        ]
+    },
+    {
+        "id": "f11_dbg_write",
+        "type": "debug",
+        "z": "tab11",
+        "name": "Debug: записано",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f11_inj_read",
+        "type": "inject",
+        "z": "tab11",
+        "name": "inject: прочитать файл",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 360,
+        "wires": [
+            [
+                "f11_file_in"
+            ]
+        ]
+    },
+    {
+        "id": "f11_file_in",
+        "type": "file in",
+        "z": "tab11",
+        "name": "file in (utf8)",
+        "filename": "/data/krupa-lab2-log.jsonl",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 470,
+        "y": 360,
+        "wires": [
+            [
+                "f11_fn_read"
+            ]
+        ]
+    },
+    {
+        "id": "f11_fn_read",
+        "type": "function",
+        "z": "tab11",
+        "name": "function: разобрать и посчитать",
+        "func": "// Файл читается целиком как строка. Разбираем его как JSON Lines.\nconst text = String(msg.payload || \"\").trim();\n\nif (text === \"\") {\n    msg.payload = {\n        student: \"Крупа Ксения\",\n        file: msg.filename,\n        message: \"Файл пуст — сначала нажмите «inject: записать показание»\"\n    };\n    return msg;\n}\n\nconst lines = text.split(/\\r?\\n/).filter(function (l) { return l.trim() !== \"\"; });\n\nconst entries = [];\nfor (const line of lines) {\n    try {\n        entries.push(JSON.parse(line));\n    } catch (e) {\n        // повреждённую строку пропускаем, чтобы не ронять поток\n    }\n}\n\nconst values = entries\n    .map(function (e) { return e.value; })\n    .filter(function (v) { return typeof v === \"number\"; });\n\nlet sum = 0;\nfor (const v of values) {\n    sum += v;\n}\n\nmsg.topic = \"lab2/krupa/files\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    file: msg.filename,\n    linesTotal: lines.length,\n    parsedOk: entries.length,\n    firstEntry: entries.length ? entries[0] : null,\n    lastEntry: entries.length ? entries[entries.length - 1] : null,\n    minValue: values.length ? Math.min.apply(null, values) : null,\n    maxValue: values.length ? Math.max.apply(null, values) : null,\n    avgValue: values.length ? Number((sum / values.length).toFixed(2)) : null\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 360,
+        "wires": [
+            [
+                "f11_dbg_read"
+            ]
+        ]
+    },
+    {
+        "id": "f11_dbg_read",
+        "type": "debug",
+        "z": "tab11",
+        "name": "Debug: содержимое файла + статистика",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1090,
+        "y": 360,
+        "wires": []
+    }
+]
