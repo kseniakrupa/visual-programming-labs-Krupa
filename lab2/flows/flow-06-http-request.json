@@ -1,0 +1,88 @@
+[
+    {
+        "id": "tab06",
+        "type": "tab",
+        "label": "06 · http request (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f06_note",
+        "type": "comment",
+        "z": "tab06",
+        "name": "2.6 HTTP Request node · ИИ-241",
+        "info": "Публичный API без регистрации и токенов. Return = a parsed JSON object, поэтому дальше идёт уже готовый объект.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f06_inject",
+        "type": "inject",
+        "z": "tab06",
+        "name": "inject: запросить шутку",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f06_http"
+            ]
+        ]
+    },
+    {
+        "id": "f06_http",
+        "type": "http request",
+        "z": "tab06",
+        "name": "GET api.chucknorris.io",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.chucknorris.io/jokes/random",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 490,
+        "y": 140,
+        "wires": [
+            [
+                "f06_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f06_debug",
+        "type": "debug",
+        "z": "tab06",
+        "name": "Debug: ответ API (complete msg)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 140,
+        "wires": []
+    }
+]

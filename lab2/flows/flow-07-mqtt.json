@@ -1,0 +1,148 @@
+[
+    {
+        "id": "tab07",
+        "type": "tab",
+        "label": "07 · mqtt (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f07_note",
+        "type": "comment",
+        "z": "tab07",
+        "name": "2.7 MQTT с публичным брокером · ИИ-241",
+        "info": "Публичный брокер broker.hivemq.com:1883. Топик student/krupa-ii241/lab2/sensor. Inject раз в 5 секунд → случайное значение → publish. Вторая ветка подписана на тот же топик и печатает пришедшее сообщение в Debug.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f07_broker",
+        "type": "mqtt-broker",
+        "name": "HiveMQ public broker",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": ""
+    },
+    {
+        "id": "f07_inj_pub",
+        "type": "inject",
+        "z": "tab07",
+        "name": "inject: раз в 5 сек (публикация)",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f07_fn_rand"
+            ]
+        ]
+    },
+    {
+        "id": "f07_fn_rand",
+        "type": "function",
+        "z": "tab07",
+        "name": "function: случайное значение датчика",
+        "func": "// Готовим «показание датчика» — случайное число 18.0 … 30.0 °C.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"student/krupa-ii241/lab2/sensor\";\nmsg.payload = JSON.stringify({\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\",\n    ts: new Date().toISOString()\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 140,
+        "wires": [
+            [
+                "f07_pub"
+            ]
+        ]
+    },
+    {
+        "id": "f07_pub",
+        "type": "mqtt out",
+        "z": "tab07",
+        "name": "mqtt out: publish",
+        "topic": "student/krupa-ii241/lab2/sensor",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f07_broker",
+        "x": 780,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "f07_sub",
+        "type": "mqtt in",
+        "z": "tab07",
+        "name": "mqtt in: subscribe",
+        "topic": "student/krupa-ii241/lab2/sensor",
+        "qos": "0",
+        "datatype": "utf8",
+        "broker": "f07_broker",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 480,
+        "y": 300,
+        "wires": [
+            [
+                "f07_dbg_sub"
+            ]
+        ]
+    },
+    {
+        "id": "f07_dbg_sub",
+        "type": "debug",
+        "z": "tab07",
+        "name": "Debug: принято из топика",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 300,
+        "wires": []
+    }
+]
