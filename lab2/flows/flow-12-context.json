@@ -1,0 +1,148 @@
+[
+    {
+        "id": "tab12",
+        "type": "tab",
+        "label": "12 · context (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f12_note",
+        "type": "comment",
+        "z": "tab12",
+        "name": "2.12 Работа с контекстом · ИИ-241",
+        "info": "flow context — счётчик, который живёт между сообщениями внутри этого flow. global context — журнал последних 5 значений, доступный из любого flow. environment variables — LAB2_STUDENT, LAB2_GROUP и LAB2_LAB, передаются контейнеру через docker run -e.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f12_inj_tick",
+        "type": "inject",
+        "z": "tab12",
+        "name": "inject: тик раз в 3 сек",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f12_fn_counter"
+            ]
+        ]
+    },
+    {
+        "id": "f12_inj_reset",
+        "type": "inject",
+        "z": "tab12",
+        "name": "inject: сбросить счётчик",
+        "props": [
+            {
+                "p": "payload",
+                "v": "reset",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 220,
+        "wires": [
+            [
+                "f12_fn_reset"
+            ]
+        ]
+    },
+    {
+        "id": "f12_fn_counter",
+        "type": "function",
+        "z": "tab12",
+        "name": "function: счётчик + global history + env",
+        "func": "// --- flow context: счётчик, живущий между сообщениями -----------------\nlet counter = flow.get(\"krupa_counter\");\nif (typeof counter !== \"number\") {\n    counter = 0;\n}\ncounter = counter + 1;\nflow.set(\"krupa_counter\", counter);\n\n// --- global context: журнал последних 5 тиков -------------------------\nlet history = global.get(\"krupa_history\");\nif (!Array.isArray(history)) {\n    history = [];\n}\nhistory.push({ n: counter, at: new Date().toISOString(), value: msg.payload });\nif (history.length > 5) {\n    history = history.slice(history.length - 5);\n}\nglobal.set(\"krupa_history\", history);\n\n// --- environment variables -------------------------------------------\nconst envStudent = env.get(\"LAB2_STUDENT\") || \"(переменная не задана)\";\nconst envGroup = env.get(\"LAB2_GROUP\") || \"(переменная не задана)\";\nconst envLab = env.get(\"LAB2_LAB\") || \"(переменная не задана)\";\n\nmsg.topic = \"lab2/krupa-ii241/context\";\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    counter: counter,\n    counterStorage: \"flow context (node: f12_fn_counter)\",\n    historyLength: history.length,\n    history: history,\n    environment: {\n        LAB2_STUDENT: envStudent,\n        LAB2_GROUP: envGroup,\n        LAB2_LAB: envLab\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "f12_dbg"
+            ]
+        ]
+    },
+    {
+        "id": "f12_fn_reset",
+        "type": "function",
+        "z": "tab12",
+        "name": "function: сброс счётчика",
+        "func": "// Сбрасываем flow context и чистим global context.\nflow.set(\"krupa_counter\", 0);\nglobal.set(\"krupa_history\", []);\n\nmsg.topic = \"lab2/krupa-ii241/context\";\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    action: \"reset\",\n    counter: 0,\n    message: \"Счётчик в flow context сброшен в 0, global history очищена\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 260,
+        "wires": [
+            [
+                "f12_dbg_reset"
+            ]
+        ]
+    },
+    {
+        "id": "f12_dbg",
+        "type": "debug",
+        "z": "tab12",
+        "name": "Debug: контекст",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f12_dbg_reset",
+        "type": "debug",
+        "z": "tab12",
+        "name": "Debug: сброс",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 260,
+        "wires": []
+    }
+]
