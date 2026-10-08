@@ -1,0 +1,117 @@
+[
+    {
+        "id": "tab04",
+        "type": "tab",
+        "label": "04 · change",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f04_note",
+        "type": "comment",
+        "z": "tab04",
+        "name": "2.4 Change / Set node",
+        "info": "Change-нода перезаписывает topic, добавляет timestamp (текущее время), служебное поле changedBy и собирает новый payload через JSONata.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f04_inject",
+        "type": "inject",
+        "z": "tab04",
+        "name": "inject: исходные данные",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"value\":23.7,\"unit\":\"C\"}",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "v": "lab2/krupa/pre-change",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "f04_change"
+            ]
+        ]
+    },
+    {
+        "id": "f04_change",
+        "type": "change",
+        "z": "tab04",
+        "name": "change: topic + timestamp + payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lab2/krupa/change",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "timestamp",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            },
+            {
+                "t": "set",
+                "p": "changedBy",
+                "pt": "msg",
+                "to": "Крупа Ксения",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Крупа Ксения | lab2 | было: \" & $string(payload)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 140,
+        "wires": [
+            [
+                "f04_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f04_debug",
+        "type": "debug",
+        "z": "tab04",
+        "name": "Debug: complete msg после change",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 140,
+        "wires": []
+    }
+]
