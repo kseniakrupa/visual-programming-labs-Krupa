@@ -17,6 +17,9 @@ lab2/
 │   ├── ...
 │   ├── flow-13-rest-crud.json
 │   └── flows.json    — сводный файл всех потоков (используется контейнером)
+├── scripts/
+│   ├── deploy.ps1        — развернуть Node-RED в Docker и загрузить потоки
+│   └── verify-flows.js   — сквозная проверка всех потоков через поток Debug
 ├── screenshots/      — скриншоты редактора и браузера
 └── node-red-data/    — docker-volume, смонтированный в /data (в git не хранится)
 ```
