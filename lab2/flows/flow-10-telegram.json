@@ -1,0 +1,229 @@
+[
+    {
+        "id": "tab10",
+        "type": "tab",
+        "label": "10 · telegram (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f10_note",
+        "type": "comment",
+        "z": "tab10",
+        "name": "2.10 Telegram-бот · ИИ-241",
+        "info": "Требуется модуль node-red-contrib-telegrambot. В настройках бота (tvl_lab2_krupa_bot) нужно вставить токен от @BotFather вместо заглушки TOKEN_FROM_BOTFATHER. Команды: /start, /help, /time + echo на любое сообщение.",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f10_bot",
+        "type": "telegram bot",
+        "botname": "tvl_lab2_krupa_bot",
+        "usernames": "",
+        "chatids": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false,
+        "token": "TOKEN_FROM_BOTFATHER"
+    },
+    {
+        "id": "f10_cmd_start",
+        "type": "telegram command",
+        "z": "tab10",
+        "name": "/start",
+        "bot": "f10_bot",
+        "command": "/start",
+        "register": true,
+        "language": "",
+        "scope": "default",
+        "description": "Начать работу с ботом",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "f10_fn_start"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_start",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: приветствие",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Привет! Я бот tvl_lab2_krupa_bot.\" + \"\\n\" +\n    \"Студент: Крупа Ксения (ИИ-241), лабораторная №2 (Node-RED).\" + \"\\n\" +\n    \"Доступные команды: /start, /help, /time.\" + \"\\n\" +\n    \"На любое другое сообщение отвечу эхом.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_cmd_help",
+        "type": "telegram command",
+        "z": "tab10",
+        "name": "/help",
+        "bot": "f10_bot",
+        "command": "/help",
+        "register": true,
+        "language": "",
+        "scope": "default",
+        "description": "Список команд",
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "f10_fn_help"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_help",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: справка",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Команды бота:\\n/start — приветствие\\n/help — эта справка\\n/time — текущее время сервера\\n\\nЛюбое другое сообщение — echo-ответ.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 240,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_cmd_time",
+        "type": "telegram command",
+        "z": "tab10",
+        "name": "/time",
+        "bot": "f10_bot",
+        "command": "/time",
+        "register": true,
+        "language": "",
+        "scope": "default",
+        "description": "Текущее время сервера",
+        "x": 180,
+        "y": 340,
+        "wires": [
+            [
+                "f10_fn_time"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_time",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: текущее время",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Сейчас на сервере Node-RED: \" + new Date().toLocaleString(\"ru-RU\")\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 320,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_receiver",
+        "type": "telegram receiver",
+        "z": "tab10",
+        "name": "receiver: все сообщения",
+        "bot": "f10_bot",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 200,
+        "y": 440,
+        "wires": [
+            [
+                "f10_fn_echo",
+                "f10_dbg_raw"
+            ]
+        ]
+    },
+    {
+        "id": "f10_fn_echo",
+        "type": "function",
+        "z": "tab10",
+        "name": "function: echo (кроме команд)",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nconst text = String(msg.payload.content || \"\");\n\n// Команды уже обработаны нодами telegram command — их не дублируем.\nif (text.trim().startsWith(\"/\")) {\n    return null;\n}\n\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Эхо: \" + text + \"\\n(сообщение получено в \" + new Date().toLocaleTimeString(\"ru-RU\") + \")\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 420,
+        "wires": [
+            [
+                "f10_sender"
+            ]
+        ]
+    },
+    {
+        "id": "f10_dbg_raw",
+        "type": "debug",
+        "z": "tab10",
+        "name": "Debug: входящее сообщение",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "f10_sender",
+        "type": "telegram sender",
+        "z": "tab10",
+        "name": "telegram sender",
+        "bot": "f10_bot",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 830,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    }
+]

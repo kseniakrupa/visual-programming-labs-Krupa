@@ -1,0 +1,176 @@
+[
+    {
+        "id": "tab09",
+        "type": "tab",
+        "label": "09 · dashboard (ИИ-241)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f09_note",
+        "type": "comment",
+        "z": "tab09",
+        "name": "2.9 Dashboard: gauge + chart · ИИ-241",
+        "info": "Требуется модуль node-red-dashboard. Inject имитирует датчик температуры раз в 2 секунды: показание уходит в gauge и в chart. UI: http://localhost:1880/ui",
+        "x": 160,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f09_ui_tab",
+        "type": "ui_tab",
+        "name": "Датчик (Крупа)",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false,
+        "env": []
+    },
+    {
+        "id": "f09_ui_group",
+        "type": "ui_group",
+        "name": "Показания датчика",
+        "tab": "f09_ui_tab",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f09_inject",
+        "type": "inject",
+        "z": "tab09",
+        "name": "inject: датчик раз в 2 сек",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "f09_sensor"
+            ]
+        ]
+    },
+    {
+        "id": "f09_sensor",
+        "type": "function",
+        "z": "tab09",
+        "name": "function: температура 18…30 °C",
+        "func": "// Имитация датчика температуры.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"lab2/krupa-ii241/dashboard\";\nmsg.payload = value;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "f09_gauge",
+                "f09_chart",
+                "f09_debug"
+            ]
+        ]
+    },
+    {
+        "id": "f09_gauge",
+        "type": "ui_gauge",
+        "z": "tab09",
+        "name": "Gauge: температура",
+        "group": "f09_ui_group",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Температура датчика, °C",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "40",
+        "colors": [
+            "#00B500",
+            "#E6E600",
+            "#CA3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 850,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f09_chart",
+        "type": "ui_chart",
+        "z": "tab09",
+        "name": "Chart: история температуры",
+        "group": "f09_ui_group",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "История температуры, °C",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "нет данных",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "40",
+        "removeOlder": "5",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1F77B4",
+            "#AEC7E8",
+            "#FF7F0E",
+            "#2CA02C",
+            "#98DF8A",
+            "#D62728",
+            "#FF9896",
+            "#9467BD",
+            "#C5B0D5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "x": 880,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f09_debug",
+        "type": "debug",
+        "z": "tab09",
+        "name": "Debug: показания датчика",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 300,
+        "wires": []
+    }
+]
