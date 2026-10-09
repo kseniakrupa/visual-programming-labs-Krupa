@@ -89,7 +89,7 @@ docker run -d --name krupa-lab2-nodered `
 | `-d` | контейнер работает в фоне |
 | `--name krupa-lab2-nodered` | понятное имя, видно в `docker ps` |
 | `-p 1880:1880` | порт 1880 хоста → порт 1880 контейнера (редактор на <http://localhost:1880>) |
-| `-v <хост-папка>:/data` | обязательный по заданию volume: папка хоста ↔ `/data` в контейнере |
+| `-v <хост-папка>:/data` | обязательный по заданию volume: папка хоста  или  `/data` в контейнере |
 | `--env-file lab2.env` | переменные окружения для потока 2.12 (`LAB2_STUDENT`, `LAB2_GROUP`, `LAB2_LAB`) |
 | `--restart unless-stopped` | контейнер поднимается сам после перезагрузки ОС |
 | `nodered/node-red:latest` | официальный образ с уже установленным Node-RED |
@@ -98,7 +98,7 @@ docker run -d --name krupa-lab2-nodered `
 
 | Компонент | Версия | Как проверено |
 |-----------|--------|---------------|
-| Node-RED | **v5.0.8** | меню (☰) → About; `docker exec krupa-lab2-nodered node-red -v` |
+| Node-RED | **v5.0.8** | меню ((меню)) → About; `docker exec krupa-lab2-nodered node-red -v` |
 | Node.js (в контейнере) | **v24.21.0** | `docker exec krupa-lab2-nodered node -v` |
 | ОС контейнера | Linux 6.18.33.2-microsoft-standard-WSL2 x64 | строка `Linux ...` в логе запуска |
 | Образ | `nodered/node-red:latest` (digest `sha256:b5adb6c9dd29…`) | `docker ps`, вывод `docker pull` |

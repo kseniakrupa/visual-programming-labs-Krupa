@@ -9,33 +9,33 @@
 
 ```
 visual-programming-labs-Krupa/
-├── README.md
-├── lab1/
-│   ├── report.md
-│   ├── diagrams/                  BPMN, UML Activity, Sequence, Flowchart
-│   └── docs/
-│       ├── process_description.md
-│       ├── flowchart.md
-│       └── sequence.md
-└── lab2/                          Node-RED как low-code инструмент
-    ├── docs/
-    │   ├── api.md                 описание HTTP-эндпоинтов, параметров и ошибок
-    │   └── report.md              отчёт по работе
-    ├── flows/                     по одному файлу на поток (меню → Import)
-    │   ├── flow-01-inject-debug.json
-    │   ├── flow-02-function.json
-    │   ├── flow-03-switch.json
-    │   ├── flow-04-change.json
-    │   ├── flow-05-template.json
-    │   ├── flow-06-http-request.json
-    │   ├── flow-07-mqtt.json
-    │   ├── flow-08-endpoints.json
-    │   ├── flow-09-dashboard.json
-    │   ├── flow-10-telegram.json
-    │   ├── flow-11-files.json
-    │   ├── flow-12-context.json
-    │   └── flow-13-rest-crud.json
-    └── screenshots/               скриншоты редактора и браузера
+|-- README.md
+|-- lab1/
+|   |-- report.md
+|   |-- diagrams/                  BPMN, UML Activity, Sequence, Flowchart
+|   \-- docs/
+|       |-- process_description.md
+|       |-- flowchart.md
+|       \-- sequence.md
+\-- lab2/                          Node-RED как low-code инструмент
+    |-- docs/
+    |   |-- api.md                 описание HTTP-эндпоинтов, параметров и ошибок
+    |   \-- report.md              отчёт по работе
+    |-- flows/                     по одному файлу на поток (меню → Import)
+    |   |-- flow-01-inject-debug.json
+    |   |-- flow-02-function.json
+    |   |-- flow-03-switch.json
+    |   |-- flow-04-change.json
+    |   |-- flow-05-template.json
+    |   |-- flow-06-http-request.json
+    |   |-- flow-07-mqtt.json
+    |   |-- flow-08-endpoints.json
+    |   |-- flow-09-dashboard.json
+    |   |-- flow-10-telegram.json
+    |   |-- flow-11-files.json
+    |   |-- flow-12-context.json
+    |   \-- flow-13-rest-crud.json
+    \-- screenshots/               скриншоты редактора и браузера
 ```
 
 ## Лабораторные работы
