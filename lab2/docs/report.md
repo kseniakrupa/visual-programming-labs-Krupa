@@ -307,17 +307,17 @@ Inject отдаёт объект с полями `student`, `lab`, `sensor`, `va
 
 ![2.8 GET-эндпоинты](../screenshots/08-endpoints.png)
 
-Успешный запрос:
+Все три обязательных эндпоинта проверены через браузер:
 
-![Успешный /api/items](../screenshots/08c-api-items-ok.png)
+![GET /api/text](../screenshots/08a-api-text.png)
 
-Ошибка `400` — `limit=99` вне диапазона:
+![GET /api/info](../screenshots/08b-api-info.png)
 
-![Ошибка 400](../screenshots/08d-api-items-400.png)
+Третий эндпоинт показан двумя запросами — успешным и с ошибкой:
 
-Ошибка `404` — товара с `id=42` нет:
+![Успешный запрос: /api/items?limit=2](../screenshots/08c-api-items-ok.png)
 
-![Ошибка 404](../screenshots/08e-api-item-404.png)
+![Запрос с ошибкой 400: /api/items?limit=99](../screenshots/08d-api-items-400.png)
 
 ### 4.9. Dashboard с gauge и графиком (`flow-09-dashboard.json`)
 
@@ -484,17 +484,17 @@ const envLab = env.get("LAB2_LAB") || "(переменная не задана)"
 
 ### 5.4. Проверка
 
-CRUD проверен через `curl`. Успешные сценарии и ошибки — на скриншотах.
+CRUD проверен в двух видах: список задач открывается прямо в браузере, а полный
+сценарий «создать → прочитать → изменить → удалить → получить 404 → получить 400
+на неверных данных» прогоняется одной командой:
 
-![GET /api/tasks](../screenshots/13a-crud-get.png)
+```powershell
+powershell -ExecutionPolicy Bypass -File lab2\scripts\demo-crud.ps1
+```
 
-![POST → 201 Created](../screenshots/13b-crud-post.png)
+Ожидаемая последовательность кодов: `200, 201, 200, 200, 200, 404, 400, 400`.
 
-![PATCH → 200 OK](../screenshots/13c-crud-patch.png)
-
-![DELETE → 200 OK](../screenshots/13d-crud-delete.png)
-
-![Ошибки 400 и 404](../screenshots/13e-crud-400-404.png)
+![Полный сценарий CRUD: все операции и коды ответов](../screenshots/13b-crud-demo.png)
 
 ---
 
