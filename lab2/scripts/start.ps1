@@ -27,6 +27,7 @@ $ErrorActionPreference = 'Continue'
 
 $LabDir  = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $DataDir = Join-Path $LabDir 'node-red-data'
+$EnvFile = Join-Path $LabDir 'scripts\lab2.env'
 $Url     = "http://localhost:$Port"
 
 function Say($text, $color = 'Gray') { Write-Host $text -ForegroundColor $color }
@@ -102,8 +103,7 @@ if ($exists) {
     docker run -d --name $Container `
         -p "${Port}:1880" `
         -v "${DataDir}:/data" `
-        -e LAB2_STUDENT=Krupa `
-        -e LAB2_LAB=2 `
+        --env-file $EnvFile `
         --restart unless-stopped `
         $Image 2>&1 | Out-Null
 

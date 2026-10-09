@@ -2,7 +2,7 @@
     {
         "id": "tab01",
         "type": "tab",
-        "label": "01 · inject → debug",
+        "label": "01 · inject → debug (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,8 +11,8 @@
         "id": "f01_note",
         "type": "comment",
         "z": "tab01",
-        "name": "2.1 inject → debug",
-        "info": "Inject раз в 5 секунд кладёт строку с фамилией в msg.payload и lab2/krupa/basic в msg.topic. Debug настроен на complete msg object, поэтому в панели Debug видны payload, topic и _msgid.",
+        "name": "2.1 inject → debug · ИИ-241",
+        "info": "Inject раз в 5 секунд кладёт строку с фамилией в msg.payload и lab2/krupa-ii241/basic в msg.topic. Debug настроен на complete msg object, поэтому в панели Debug видны payload, topic и _msgid.",
         "x": 160,
         "y": 60,
         "wires": []
@@ -21,16 +21,16 @@
         "id": "f01_inject",
         "type": "inject",
         "z": "tab01",
-        "name": "Каждые 5 сек: Крупа Ксения",
+        "name": "Каждые 5 сек: Крупа Ксения (ИИ-241)",
         "props": [
             {
                 "p": "payload",
-                "v": "Крупа Ксения",
+                "v": "Крупа Ксения (ИИ-241)",
                 "vt": "str"
             },
             {
                 "p": "topic",
-                "v": "lab2/krupa/basic",
+                "v": "lab2/krupa-ii241/basic",
                 "vt": "str"
             }
         ],

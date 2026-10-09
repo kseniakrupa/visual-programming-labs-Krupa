@@ -2,7 +2,7 @@
     {
         "id": "tab01",
         "type": "tab",
-        "label": "01 · inject → debug",
+        "label": "01 · inject → debug (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,8 +11,8 @@
         "id": "f01_note",
         "type": "comment",
         "z": "tab01",
-        "name": "2.1 inject → debug",
-        "info": "Inject раз в 5 секунд кладёт строку с фамилией в msg.payload и lab2/krupa/basic в msg.topic. Debug настроен на complete msg object, поэтому в панели Debug видны payload, topic и _msgid.",
+        "name": "2.1 inject → debug · ИИ-241",
+        "info": "Inject раз в 5 секунд кладёт строку с фамилией в msg.payload и lab2/krupa-ii241/basic в msg.topic. Debug настроен на complete msg object, поэтому в панели Debug видны payload, topic и _msgid.",
         "x": 160,
         "y": 60,
         "wires": []
@@ -21,16 +21,16 @@
         "id": "f01_inject",
         "type": "inject",
         "z": "tab01",
-        "name": "Каждые 5 сек: Крупа Ксения",
+        "name": "Каждые 5 сек: Крупа Ксения (ИИ-241)",
         "props": [
             {
                 "p": "payload",
-                "v": "Крупа Ксения",
+                "v": "Крупа Ксения (ИИ-241)",
                 "vt": "str"
             },
             {
                 "p": "topic",
-                "v": "lab2/krupa/basic",
+                "v": "lab2/krupa-ii241/basic",
                 "vt": "str"
             }
         ],
@@ -69,7 +69,7 @@
     {
         "id": "tab02",
         "type": "tab",
-        "label": "02 · function",
+        "label": "02 · function (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -78,7 +78,7 @@
         "id": "f02_note",
         "type": "comment",
         "z": "tab02",
-        "name": "2.2 Function node",
+        "name": "2.2 Function node · ИИ-241",
         "info": "Три inject-ноды подают в одну функцию число, строку и объект — чтобы показать разные ветки if/else внутри кода.",
         "x": 160,
         "y": 60,
@@ -119,7 +119,7 @@
         "props": [
             {
                 "p": "payload",
-                "v": "Крупа Ксения",
+                "v": "Крупа Ксения (ИИ-241)",
                 "vt": "str"
             }
         ],
@@ -146,7 +146,7 @@
         "props": [
             {
                 "p": "payload",
-                "v": "{\"student\":\"Крупа Ксения\",\"lab\":2,\"scores\":[5,4,5,3]}",
+                "v": "{\"student\":\"Крупа Ксения (ИИ-241)\",\"lab\":2,\"scores\":[5,4,5,3]}",
                 "vt": "json"
             }
         ],
@@ -170,7 +170,7 @@
         "type": "function",
         "z": "tab02",
         "name": "function: статистика по payload",
-        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa/function\";\nmsg.student = \"Крупа Ксения\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
+        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa-ii241/function\";\nmsg.student = \"Крупа Ксения (ИИ-241)\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -205,7 +205,7 @@
     {
         "id": "tab03",
         "type": "tab",
-        "label": "03 · switch",
+        "label": "03 · switch (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -214,7 +214,7 @@
         "id": "f03_note",
         "type": "comment",
         "z": "tab03",
-        "name": "2.3 Switch node",
+        "name": "2.3 Switch node · ИИ-241",
         "info": "Та же функция, что в 2.2. Switch ветвит по msg.payload.avg: правило 1 = avg >= 4, правило 2 = otherwise. Два debug на разные выходы.",
         "x": 160,
         "y": 60,
@@ -228,7 +228,7 @@
         "props": [
             {
                 "p": "payload",
-                "v": "{\"student\":\"Крупа Ксения\",\"scores\":[5,5,4]}",
+                "v": "{\"student\":\"Крупа Ксения (ИИ-241)\",\"scores\":[5,5,4]}",
                 "vt": "json"
             }
         ],
@@ -279,7 +279,7 @@
         "type": "function",
         "z": "tab03",
         "name": "function: та же логика, что в 2.2",
-        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa/function\";\nmsg.student = \"Крупа Ксения\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
+        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa-ii241/function\";\nmsg.student = \"Крупа Ксения (ИИ-241)\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -362,7 +362,7 @@
     {
         "id": "tab04",
         "type": "tab",
-        "label": "04 · change",
+        "label": "04 · change (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -371,7 +371,7 @@
         "id": "f04_note",
         "type": "comment",
         "z": "tab04",
-        "name": "2.4 Change / Set node",
+        "name": "2.4 Change / Set node · ИИ-241",
         "info": "Change-нода перезаписывает topic, добавляет timestamp (текущее время), служебное поле changedBy и собирает новый payload через JSONata.",
         "x": 160,
         "y": 60,
@@ -390,7 +390,7 @@
             },
             {
                 "p": "topic",
-                "v": "lab2/krupa/pre-change",
+                "v": "lab2/krupa-ii241/pre-change",
                 "vt": "str"
             }
         ],
@@ -419,7 +419,7 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "lab2/krupa/change",
+                "to": "lab2/krupa-ii241/change",
                 "tot": "str"
             },
             {
@@ -433,14 +433,14 @@
                 "t": "set",
                 "p": "changedBy",
                 "pt": "msg",
-                "to": "Крупа Ксения",
+                "to": "Крупа Ксения (ИИ-241)",
                 "tot": "str"
             },
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "\"Крупа Ксения | lab2 | было: \" & $string(payload)",
+                "to": "\"Крупа Ксения (ИИ-241) | lab2 | было: \" & $string(payload)",
                 "tot": "jsonata"
             }
         ],
@@ -477,7 +477,7 @@
     {
         "id": "tab05",
         "type": "tab",
-        "label": "05 · template",
+        "label": "05 · template (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -486,7 +486,7 @@
         "id": "f05_note",
         "type": "comment",
         "z": "tab05",
-        "name": "2.5 Template node",
+        "name": "2.5 Template node · ИИ-241",
         "info": "Inject отдаёт объект с тремя полями. Mustache-шаблон собирает из него JSON, Output = parsed JSON, поэтому в Debug видно уже объект, а не строку.",
         "x": 160,
         "y": 60,
@@ -500,7 +500,7 @@
         "props": [
             {
                 "p": "payload",
-                "v": "{\"student\":\"Крупа Ксения\",\"lab\":2,\"sensor\":\"temperature\",\"value\":27.4,\"unit\":\"C\"}",
+                "v": "{\"student\":\"Крупа Ксения (ИИ-241)\",\"lab\":2,\"sensor\":\"temperature\",\"value\":27.4,\"unit\":\"C\"}",
                 "vt": "json"
             }
         ],
@@ -528,7 +528,7 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "{\n  \"student\": \"{{payload.student}}\",\n  \"lab\": {{payload.lab}},\n  \"topic\": \"lab2/krupa/template\",\n  \"measurement\": {\n    \"sensor\": \"{{payload.sensor}}\",\n    \"value\": {{payload.value}},\n    \"unit\": \"{{payload.unit}}\"\n  },\n  \"summary\": \"{{payload.sensor}}: {{payload.value}} {{payload.unit}} у студента {{payload.student}}\"\n}",
+        "template": "{\n  \"student\": \"{{payload.student}}\",\n  \"lab\": {{payload.lab}},\n  \"topic\": \"lab2/krupa-ii241/template\",\n  \"measurement\": {\n    \"sensor\": \"{{payload.sensor}}\",\n    \"value\": {{payload.value}},\n    \"unit\": \"{{payload.unit}}\"\n  },\n  \"summary\": \"{{payload.sensor}}: {{payload.value}} {{payload.unit}} у студента {{payload.student}}\"\n}",
         "output": "json",
         "x": 560,
         "y": 140,
@@ -558,7 +558,7 @@
     {
         "id": "tab06",
         "type": "tab",
-        "label": "06 · http request",
+        "label": "06 · http request (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -567,7 +567,7 @@
         "id": "f06_note",
         "type": "comment",
         "z": "tab06",
-        "name": "2.6 HTTP Request node",
+        "name": "2.6 HTTP Request node · ИИ-241",
         "info": "Публичный API без регистрации и токенов. Return = a parsed JSON object, поэтому дальше идёт уже готовый объект.",
         "x": 160,
         "y": 60,
@@ -644,7 +644,7 @@
     {
         "id": "tab07",
         "type": "tab",
-        "label": "07 · mqtt",
+        "label": "07 · mqtt (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -653,8 +653,8 @@
         "id": "f07_note",
         "type": "comment",
         "z": "tab07",
-        "name": "2.7 MQTT с публичным брокером",
-        "info": "Публичный брокер broker.hivemq.com:1883. Топик student/krupa/lab2/sensor. Inject раз в 5 секунд → случайное значение → publish. Вторая ветка подписана на тот же топик и печатает пришедшее сообщение в Debug.",
+        "name": "2.7 MQTT с публичным брокером · ИИ-241",
+        "info": "Публичный брокер broker.hivemq.com:1883. Топик student/krupa-ii241/lab2/sensor. Inject раз в 5 секунд → случайное значение → publish. Вторая ветка подписана на тот же топик и печатает пришедшее сообщение в Debug.",
         "x": 160,
         "y": 60,
         "wires": []
@@ -716,7 +716,7 @@
         "type": "function",
         "z": "tab07",
         "name": "function: случайное значение датчика",
-        "func": "// Готовим «показание датчика» — случайное число 18.0 … 30.0 °C.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"student/krupa/lab2/sensor\";\nmsg.payload = JSON.stringify({\n    student: \"Крупа Ксения\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\",\n    ts: new Date().toISOString()\n});\n\nreturn msg;",
+        "func": "// Готовим «показание датчика» — случайное число 18.0 … 30.0 °C.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"student/krupa-ii241/lab2/sensor\";\nmsg.payload = JSON.stringify({\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\",\n    ts: new Date().toISOString()\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -736,7 +736,7 @@
         "type": "mqtt out",
         "z": "tab07",
         "name": "mqtt out: publish",
-        "topic": "student/krupa/lab2/sensor",
+        "topic": "student/krupa-ii241/lab2/sensor",
         "qos": "0",
         "retain": "",
         "respTopic": "",
@@ -754,7 +754,7 @@
         "type": "mqtt in",
         "z": "tab07",
         "name": "mqtt in: subscribe",
-        "topic": "student/krupa/lab2/sensor",
+        "topic": "student/krupa-ii241/lab2/sensor",
         "qos": "0",
         "datatype": "utf8",
         "broker": "f07_broker",
@@ -790,7 +790,7 @@
     {
         "id": "tab08",
         "type": "tab",
-        "label": "08 · GET endpoints",
+        "label": "08 · GET endpoints (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -799,7 +799,7 @@
         "id": "f08_note",
         "type": "comment",
         "z": "tab08",
-        "name": "2.8 GET-эндпоинты",
+        "name": "2.8 GET-эндпоинты · ИИ-241",
         "info": "Четыре пары http in + http response. /api/text — plain text, /api/info — JSON с двумя полями, /api/items — query params (limit, category) с ошибкой 400, /api/items/:id — path param с ошибкой 400/404.",
         "x": 160,
         "y": 60,
@@ -827,7 +827,7 @@
         "type": "function",
         "z": "tab08",
         "name": "function: простой текст",
-        "func": "msg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"text/plain; charset=utf-8\" };\nmsg.payload = \"Крупа Ксения | lab2 (Node-RED) | GET /api/text отвечает простым текстом\";\nreturn msg;",
+        "func": "msg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"text/plain; charset=utf-8\" };\nmsg.payload = \"Крупа Ксения (ИИ-241) | lab2 (Node-RED) | GET /api/text отвечает простым текстом\";\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -875,7 +875,7 @@
         "type": "function",
         "z": "tab08",
         "name": "function: JSON с двумя полями",
-        "func": "msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2\n};\nreturn msg;",
+        "func": "msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -923,7 +923,7 @@
         "type": "function",
         "z": "tab08",
         "name": "function: query params + 400",
-        "func": "// Каталог товаров (в реальном проекте — БД или файл).\nconst items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst q = msg.req.query || {};\nlet limit = items.length;\n\nif (q.limit !== undefined) {\n    limit = Number(q.limit);\n    if (!Number.isInteger(limit) || limit < 1 || limit > 5) {\n        msg.statusCode = 400;\n        msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n        msg.payload = {\n            error: \"Bad Request\",\n            message: \"Параметр limit должен быть целым числом от 1 до 5\",\n            received: q.limit,\n            student: \"Крупа Ксения\"\n        };\n        return msg;\n    }\n}\n\nlet result = items;\nif (q.category !== undefined) {\n    result = result.filter(function (i) { return i.category === q.category; });\n}\nresult = result.slice(0, limit);\n\nmsg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    appliedLimit: limit,\n    appliedCategory: q.category || null,\n    count: result.length,\n    items: result\n};\nreturn msg;",
+        "func": "// Каталог товаров (в реальном проекте — БД или файл).\nconst items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst q = msg.req.query || {};\nlet limit = items.length;\n\nif (q.limit !== undefined) {\n    limit = Number(q.limit);\n    if (!Number.isInteger(limit) || limit < 1 || limit > 5) {\n        msg.statusCode = 400;\n        msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n        msg.payload = {\n            error: \"Bad Request\",\n            message: \"Параметр limit должен быть целым числом от 1 до 5\",\n            received: q.limit,\n            student: \"Крупа Ксения (ИИ-241)\"\n        };\n        return msg;\n    }\n}\n\nlet result = items;\nif (q.category !== undefined) {\n    result = result.filter(function (i) { return i.category === q.category; });\n}\nresult = result.slice(0, limit);\n\nmsg.statusCode = 200;\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    appliedLimit: limit,\n    appliedCategory: q.category || null,\n    count: result.length,\n    items: result\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -971,7 +971,7 @@
         "type": "function",
         "z": "tab08",
         "name": "function: path param + 400/404",
-        "func": "const items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst raw = msg.req.params.id;\nconst id = Number(raw);\n\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n\nif (!Number.isInteger(id)) {\n    msg.statusCode = 400;\n    msg.payload = {\n        error: \"Bad Request\",\n        message: \"id должен быть целым числом\",\n        received: raw,\n        student: \"Крупа Ксения\"\n    };\n    return msg;\n}\n\nconst item = items.find(function (i) { return i.id === id; });\n\nif (!item) {\n    msg.statusCode = 404;\n    msg.payload = {\n        error: \"Not Found\",\n        message: \"Товар с id=\" + id + \" не найден\",\n        availableIds: items.map(function (i) { return i.id; }),\n        student: \"Крупа Ксения\"\n    };\n    return msg;\n}\n\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    item: item\n};\nreturn msg;",
+        "func": "const items = [\n    { id: 1, name: \"Ноутбук\",     category: \"tech\",  price: 1500 },\n    { id: 2, name: \"Яблоко\",      category: \"fruit\", price: 2 },\n    { id: 3, name: \"Клавиатура\",  category: \"tech\",  price: 80 },\n    { id: 4, name: \"Банан\",       category: \"fruit\", price: 1 },\n    { id: 5, name: \"Монитор\",     category: \"tech\",  price: 300 }\n];\n\nconst raw = msg.req.params.id;\nconst id = Number(raw);\n\nmsg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n\nif (!Number.isInteger(id)) {\n    msg.statusCode = 400;\n    msg.payload = {\n        error: \"Bad Request\",\n        message: \"id должен быть целым числом\",\n        received: raw,\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n    return msg;\n}\n\nconst item = items.find(function (i) { return i.id === id; });\n\nif (!item) {\n    msg.statusCode = 404;\n    msg.payload = {\n        error: \"Not Found\",\n        message: \"Товар с id=\" + id + \" не найден\",\n        availableIds: items.map(function (i) { return i.id; }),\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n    return msg;\n}\n\nmsg.statusCode = 200;\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    item: item\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1000,7 +1000,7 @@
     {
         "id": "tab09",
         "type": "tab",
-        "label": "09 · dashboard",
+        "label": "09 · dashboard (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -1009,7 +1009,7 @@
         "id": "f09_note",
         "type": "comment",
         "z": "tab09",
-        "name": "2.9 Dashboard: gauge + chart",
+        "name": "2.9 Dashboard: gauge + chart · ИИ-241",
         "info": "Требуется модуль node-red-dashboard. Inject имитирует датчик температуры раз в 2 секунды: показание уходит в gauge и в chart. UI: http://localhost:1880/ui",
         "x": 160,
         "y": 60,
@@ -1068,7 +1068,7 @@
         "type": "function",
         "z": "tab09",
         "name": "function: температура 18…30 °C",
-        "func": "// Имитация датчика температуры.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"lab2/krupa/dashboard\";\nmsg.payload = value;\nreturn msg;",
+        "func": "// Имитация датчика температуры.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"lab2/krupa-ii241/dashboard\";\nmsg.payload = value;\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1174,7 +1174,7 @@
     {
         "id": "tab10",
         "type": "tab",
-        "label": "10 · telegram",
+        "label": "10 · telegram (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -1183,7 +1183,7 @@
         "id": "f10_note",
         "type": "comment",
         "z": "tab10",
-        "name": "2.10 Telegram-бот",
+        "name": "2.10 Telegram-бот · ИИ-241",
         "info": "Требуется модуль node-red-contrib-telegrambot. В настройках бота (tvl_lab2_krupa_bot) нужно вставить токен от @BotFather вместо заглушки TOKEN_FROM_BOTFATHER. Команды: /start, /help, /time + echo на любое сообщение.",
         "x": 160,
         "y": 60,
@@ -1237,7 +1237,7 @@
         "type": "function",
         "z": "tab10",
         "name": "function: приветствие",
-        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Привет! Я бот tvl_lab2_krupa_bot.\" + \"\\n\" +\n    \"Студент: Крупа Ксения, лабораторная №2 (Node-RED).\" + \"\\n\" +\n    \"Доступные команды: /start, /help, /time.\" + \"\\n\" +\n    \"На любое другое сообщение отвечу эхом.\"\n};\nreturn msg;",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Привет! Я бот tvl_lab2_krupa_bot.\" + \"\\n\" +\n    \"Студент: Крупа Ксения (ИИ-241), лабораторная №2 (Node-RED).\" + \"\\n\" +\n    \"Доступные команды: /start, /help, /time.\" + \"\\n\" +\n    \"На любое другое сообщение отвечу эхом.\"\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1401,7 +1401,7 @@
     {
         "id": "tab11",
         "type": "tab",
-        "label": "11 · files",
+        "label": "11 · files (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -1410,8 +1410,8 @@
         "id": "f11_note",
         "type": "comment",
         "z": "tab11",
-        "name": "2.11 Чтение и запись файла",
-        "info": "Ветка записи (inject → function → file out) дописывает строку JSON в /data/krupa-lab2-log.jsonl (формат JSON Lines). Ветка чтения (inject → file in → function → debug) разбирает файл и считает статистику. Файл лежит в docker-volume, поэтому данные сохраняются между перезапусками контейнера.",
+        "name": "2.11 Чтение и запись файла · ИИ-241",
+        "info": "Ветка записи (inject → function → file out) дописывает строку JSON в /data/krupa-ii241-log.jsonl (формат JSON Lines). Ветка чтения (inject → file in → function → debug) разбирает файл и считает статистику. Файл лежит в docker-volume, поэтому данные сохраняются между перезапусками контейнера.",
         "x": 160,
         "y": 60,
         "wires": []
@@ -1448,7 +1448,7 @@
         "type": "function",
         "z": "tab11",
         "name": "function: сформировать запись",
-        "func": "// Готовим одну строку лога — валидный JSON без переводов строк.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.filename = \"/data/krupa-lab2-log.jsonl\";\nmsg.payload = JSON.stringify({\n    ts: new Date().toISOString(),\n    student: \"Крупа Ксения\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\"\n});\n\nreturn msg;",
+        "func": "// Готовим одну строку лога — валидный JSON без переводов строк.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.filename = \"/data/krupa-ii241-log.jsonl\";\nmsg.payload = JSON.stringify({\n    ts: new Date().toISOString(),\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    sensor: \"temperature\",\n    value: value,\n    unit: \"C\"\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1468,7 +1468,7 @@
         "type": "file",
         "z": "tab11",
         "name": "file out (append)",
-        "filename": "/data/krupa-lab2-log.jsonl",
+        "filename": "/data/krupa-ii241-log.jsonl",
         "appendNewline": true,
         "createDir": true,
         "overwriteFile": "false",
@@ -1530,7 +1530,7 @@
         "type": "file in",
         "z": "tab11",
         "name": "file in (utf8)",
-        "filename": "/data/krupa-lab2-log.jsonl",
+        "filename": "/data/krupa-ii241-log.jsonl",
         "format": "utf8",
         "chunk": false,
         "sendError": false,
@@ -1549,7 +1549,7 @@
         "type": "function",
         "z": "tab11",
         "name": "function: разобрать и посчитать",
-        "func": "// Файл читается целиком как строка. Разбираем его как JSON Lines.\nconst text = String(msg.payload || \"\").trim();\n\nif (text === \"\") {\n    msg.payload = {\n        student: \"Крупа Ксения\",\n        file: msg.filename,\n        message: \"Файл пуст — сначала нажмите «inject: записать показание»\"\n    };\n    return msg;\n}\n\nconst lines = text.split(/\\r?\\n/).filter(function (l) { return l.trim() !== \"\"; });\n\nconst entries = [];\nfor (const line of lines) {\n    try {\n        entries.push(JSON.parse(line));\n    } catch (e) {\n        // повреждённую строку пропускаем, чтобы не ронять поток\n    }\n}\n\nconst values = entries\n    .map(function (e) { return e.value; })\n    .filter(function (v) { return typeof v === \"number\"; });\n\nlet sum = 0;\nfor (const v of values) {\n    sum += v;\n}\n\nmsg.topic = \"lab2/krupa/files\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    file: msg.filename,\n    linesTotal: lines.length,\n    parsedOk: entries.length,\n    firstEntry: entries.length ? entries[0] : null,\n    lastEntry: entries.length ? entries[entries.length - 1] : null,\n    minValue: values.length ? Math.min.apply(null, values) : null,\n    maxValue: values.length ? Math.max.apply(null, values) : null,\n    avgValue: values.length ? Number((sum / values.length).toFixed(2)) : null\n};\n\nreturn msg;",
+        "func": "// Файл читается целиком как строка. Разбираем его как JSON Lines.\nconst text = String(msg.payload || \"\").trim();\n\nif (text === \"\") {\n    msg.payload = {\n        student: \"Крупа Ксения (ИИ-241)\",\n        file: msg.filename,\n        message: \"Файл пуст — сначала нажмите «inject: записать показание»\"\n    };\n    return msg;\n}\n\nconst lines = text.split(/\\r?\\n/).filter(function (l) { return l.trim() !== \"\"; });\n\nconst entries = [];\nfor (const line of lines) {\n    try {\n        entries.push(JSON.parse(line));\n    } catch (e) {\n        // повреждённую строку пропускаем, чтобы не ронять поток\n    }\n}\n\nconst values = entries\n    .map(function (e) { return e.value; })\n    .filter(function (v) { return typeof v === \"number\"; });\n\nlet sum = 0;\nfor (const v of values) {\n    sum += v;\n}\n\nmsg.topic = \"lab2/krupa-ii241/files\";\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    file: msg.filename,\n    linesTotal: lines.length,\n    parsedOk: entries.length,\n    firstEntry: entries.length ? entries[0] : null,\n    lastEntry: entries.length ? entries[entries.length - 1] : null,\n    minValue: values.length ? Math.min.apply(null, values) : null,\n    maxValue: values.length ? Math.max.apply(null, values) : null,\n    avgValue: values.length ? Number((sum / values.length).toFixed(2)) : null\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1584,7 +1584,7 @@
     {
         "id": "tab12",
         "type": "tab",
-        "label": "12 · context",
+        "label": "12 · context (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -1593,8 +1593,8 @@
         "id": "f12_note",
         "type": "comment",
         "z": "tab12",
-        "name": "2.12 Работа с контекстом",
-        "info": "flow context — счётчик, который живёт между сообщениями внутри этого flow. global context — журнал последних 5 значений, доступный из любого flow. environment variables — LAB2_STUDENT и LAB2_LAB, передаются контейнеру через docker run -e.",
+        "name": "2.12 Работа с контекстом · ИИ-241",
+        "info": "flow context — счётчик, который живёт между сообщениями внутри этого flow. global context — журнал последних 5 значений, доступный из любого flow. environment variables — LAB2_STUDENT, LAB2_GROUP и LAB2_LAB, передаются контейнеру через docker run -e.",
         "x": 160,
         "y": 60,
         "wires": []
@@ -1658,7 +1658,7 @@
         "type": "function",
         "z": "tab12",
         "name": "function: счётчик + global history + env",
-        "func": "// --- flow context: счётчик, живущий между сообщениями -----------------\nlet counter = flow.get(\"krupa_counter\");\nif (typeof counter !== \"number\") {\n    counter = 0;\n}\ncounter = counter + 1;\nflow.set(\"krupa_counter\", counter);\n\n// --- global context: журнал последних 5 тиков -------------------------\nlet history = global.get(\"krupa_history\");\nif (!Array.isArray(history)) {\n    history = [];\n}\nhistory.push({ n: counter, at: new Date().toISOString(), value: msg.payload });\nif (history.length > 5) {\n    history = history.slice(history.length - 5);\n}\nglobal.set(\"krupa_history\", history);\n\n// --- environment variables -------------------------------------------\nconst envStudent = env.get(\"LAB2_STUDENT\") || \"(переменная не задана)\";\nconst envLab = env.get(\"LAB2_LAB\") || \"(переменная не задана)\";\n\nmsg.topic = \"lab2/krupa/context\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    counter: counter,\n    counterStorage: \"flow context (node: f12_fn_counter)\",\n    historyLength: history.length,\n    history: history,\n    environment: {\n        LAB2_STUDENT: envStudent,\n        LAB2_LAB: envLab\n    }\n};\n\nreturn msg;",
+        "func": "// --- flow context: счётчик, живущий между сообщениями -----------------\nlet counter = flow.get(\"krupa_counter\");\nif (typeof counter !== \"number\") {\n    counter = 0;\n}\ncounter = counter + 1;\nflow.set(\"krupa_counter\", counter);\n\n// --- global context: журнал последних 5 тиков -------------------------\nlet history = global.get(\"krupa_history\");\nif (!Array.isArray(history)) {\n    history = [];\n}\nhistory.push({ n: counter, at: new Date().toISOString(), value: msg.payload });\nif (history.length > 5) {\n    history = history.slice(history.length - 5);\n}\nglobal.set(\"krupa_history\", history);\n\n// --- environment variables -------------------------------------------\nconst envStudent = env.get(\"LAB2_STUDENT\") || \"(переменная не задана)\";\nconst envGroup = env.get(\"LAB2_GROUP\") || \"(переменная не задана)\";\nconst envLab = env.get(\"LAB2_LAB\") || \"(переменная не задана)\";\n\nmsg.topic = \"lab2/krupa-ii241/context\";\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    counter: counter,\n    counterStorage: \"flow context (node: f12_fn_counter)\",\n    historyLength: history.length,\n    history: history,\n    environment: {\n        LAB2_STUDENT: envStudent,\n        LAB2_GROUP: envGroup,\n        LAB2_LAB: envLab\n    }\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1678,7 +1678,7 @@
         "type": "function",
         "z": "tab12",
         "name": "function: сброс счётчика",
-        "func": "// Сбрасываем flow context и чистим global context.\nflow.set(\"krupa_counter\", 0);\nglobal.set(\"krupa_history\", []);\n\nmsg.topic = \"lab2/krupa/context\";\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    action: \"reset\",\n    counter: 0,\n    message: \"Счётчик в flow context сброшен в 0, global history очищена\"\n};\nreturn msg;",
+        "func": "// Сбрасываем flow context и чистим global context.\nflow.set(\"krupa_counter\", 0);\nglobal.set(\"krupa_history\", []);\n\nmsg.topic = \"lab2/krupa-ii241/context\";\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    action: \"reset\",\n    counter: 0,\n    message: \"Счётчик в flow context сброшен в 0, global history очищена\"\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1730,7 +1730,7 @@
     {
         "id": "tab13",
         "type": "tab",
-        "label": "13 · REST CRUD (ачивка 5)",
+        "label": "13 · REST CRUD (ачивка 5) (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -1739,7 +1739,7 @@
         "id": "f13_note",
         "type": "comment",
         "z": "tab13",
-        "name": "Ачивка №5 — REST+ полный CRUD",
+        "name": "Ачивка №5 — REST+ полный CRUD · ИИ-241",
         "info": "Сущность task, два поля: title (string) и done (boolean). Хранение — flow context (переменная krupa_tasks). Реализованы GET /api/tasks, GET /api/tasks/:id, POST /api/tasks, PATCH /api/tasks/:id, DELETE /api/tasks/:id со статусами 200/201/400/404. Inject «сидировать» наполняет контекст тестовыми данными после редеплоя.",
         "x": 160,
         "y": 60,
@@ -1777,7 +1777,7 @@
         "type": "function",
         "z": "tab13",
         "name": "function: начальные данные",
-        "func": "// Наполняем flow context стартовым набором, если он пуст.\nconst existing = flow.get(\"krupa_tasks\");\n\nif (Array.isArray(existing) && existing.length > 0) {\n    return null;                    // не перетираем уже созданные задачи\n}\n\nflow.set(\"krupa_tasks\", [\n    { id: 1, title: \"Прочитать методичку по Node-RED\", done: true,  createdAt: \"2026-01-01T09:00:00.000Z\" },\n    { id: 2, title: \"Собрать поток inject → debug\",    done: true,  createdAt: \"2026-01-01T09:10:00.000Z\" },\n    { id: 3, title: \"Сделать CRUD на http in/response\", done: false, createdAt: \"2026-01-01T09:20:00.000Z\" }\n]);\n\nmsg.payload = {\n    student: \"Крупа Ксения\",\n    message: \"flow context krupa_tasks проинициализирован\",\n    count: 3\n};\nreturn msg;",
+        "func": "// Наполняем flow context стартовым набором, если он пуст.\nconst existing = flow.get(\"krupa_tasks\");\n\nif (Array.isArray(existing) && existing.length > 0) {\n    return null;                    // не перетираем уже созданные задачи\n}\n\nflow.set(\"krupa_tasks\", [\n    { id: 1, title: \"Прочитать методичку по Node-RED\", done: true,  createdAt: \"2026-01-01T09:00:00.000Z\" },\n    { id: 2, title: \"Собрать поток inject → debug\",    done: true,  createdAt: \"2026-01-01T09:10:00.000Z\" },\n    { id: 3, title: \"Сделать CRUD на http in/response\", done: false, createdAt: \"2026-01-01T09:20:00.000Z\" }\n]);\n\nmsg.payload = {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"flow context krupa_tasks проинициализирован\",\n    count: 3\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1831,7 +1831,7 @@
         "type": "function",
         "z": "tab13",
         "name": "function: список задач",
-        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst q = msg.req.query || {};\n\nlet result = tasks;\nif (q.done !== undefined) {\n    if (q.done !== \"true\" && q.done !== \"false\") {\n        return send(msg, 400, badRequest(\"Параметр done должен быть true или false\", { received: q.done }));\n    }\n    const wanted = q.done === \"true\";\n    result = result.filter(function (t) { return t.done === wanted; });\n}\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения\",\n    lab: 2,\n    total: tasks.length,\n    count: result.length,\n    tasks: result\n});",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst q = msg.req.query || {};\n\nlet result = tasks;\nif (q.done !== undefined) {\n    if (q.done !== \"true\" && q.done !== \"false\") {\n        return send(msg, 400, badRequest(\"Параметр done должен быть true или false\", { received: q.done }));\n    }\n    const wanted = q.done === \"true\";\n    result = result.filter(function (t) { return t.done === wanted; });\n}\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    lab: 2,\n    total: tasks.length,\n    count: result.length,\n    tasks: result\n});",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1879,7 +1879,7 @@
         "type": "function",
         "z": "tab13",
         "name": "function: задача по id",
-        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst task = tasks.find(function (t) { return t.id === id; });\nif (!task) {\n    return send(msg, 404, notFound(id));\n}\n\nreturn send(msg, 200, { student: \"Крупа Ксения\", lab: 2, task: task });",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst task = tasks.find(function (t) { return t.id === id; });\nif (!task) {\n    return send(msg, 404, notFound(id));\n}\n\nreturn send(msg, 200, { student: \"Крупа Ксения (ИИ-241)\", lab: 2, task: task });",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1927,7 +1927,7 @@
         "type": "function",
         "z": "tab13",
         "name": "function: создать задачу",
-        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst body = msg.payload;\n\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst titleError = validateTitle(body.title);\nif (titleError) {\n    return send(msg, 400, badRequest(titleError, { received: body.title }));\n}\n\nlet done = false;\nif (body.done !== undefined) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    done = body.done;\n}\n\nlet maxId = 0;\nfor (const t of tasks) {\n    if (t.id > maxId) { maxId = t.id; }\n}\n\nconst task = {\n    id: maxId + 1,\n    title: body.title.trim(),\n    done: done,\n    createdAt: new Date().toISOString()\n};\n\ntasks.push(task);\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 201, {\n    student: \"Крупа Ксения\",\n    message: \"Задача создана\",\n    task: task,\n    total: tasks.length\n});",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst body = msg.payload;\n\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst titleError = validateTitle(body.title);\nif (titleError) {\n    return send(msg, 400, badRequest(titleError, { received: body.title }));\n}\n\nlet done = false;\nif (body.done !== undefined) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    done = body.done;\n}\n\nlet maxId = 0;\nfor (const t of tasks) {\n    if (t.id > maxId) { maxId = t.id; }\n}\n\nconst task = {\n    id: maxId + 1,\n    title: body.title.trim(),\n    done: done,\n    createdAt: new Date().toISOString()\n};\n\ntasks.push(task);\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 201, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"Задача создана\",\n    task: task,\n    total: tasks.length\n});",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1975,7 +1975,7 @@
         "type": "function",
         "z": "tab13",
         "name": "function: изменить задачу",
-        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst body = msg.payload;\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst hasTitle = body.title !== undefined;\nconst hasDone = body.done !== undefined;\n\nif (!hasTitle && !hasDone) {\n    return send(msg, 400, badRequest(\"Нужно передать хотя бы одно поле: title или done\"));\n}\n\nconst updated = Object.assign({}, tasks[index]);\n\nif (hasTitle) {\n    const titleError = validateTitle(body.title);\n    if (titleError) {\n        return send(msg, 400, badRequest(titleError, { received: body.title }));\n    }\n    updated.title = body.title.trim();\n}\n\nif (hasDone) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    updated.done = body.done;\n}\n\nupdated.updatedAt = new Date().toISOString();\ntasks[index] = updated;\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения\",\n    message: \"Задача обновлена\",\n    task: updated\n});",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst body = msg.payload;\nif (body === null || typeof body !== \"object\" || Array.isArray(body)) {\n    return send(msg, 400, badRequest(\"Тело запроса должно быть JSON-объектом\"));\n}\n\nconst hasTitle = body.title !== undefined;\nconst hasDone = body.done !== undefined;\n\nif (!hasTitle && !hasDone) {\n    return send(msg, 400, badRequest(\"Нужно передать хотя бы одно поле: title или done\"));\n}\n\nconst updated = Object.assign({}, tasks[index]);\n\nif (hasTitle) {\n    const titleError = validateTitle(body.title);\n    if (titleError) {\n        return send(msg, 400, badRequest(titleError, { received: body.title }));\n    }\n    updated.title = body.title.trim();\n}\n\nif (hasDone) {\n    if (typeof body.done !== \"boolean\") {\n        return send(msg, 400, badRequest(\"Поле done должно быть boolean\", { received: body.done }));\n    }\n    updated.done = body.done;\n}\n\nupdated.updatedAt = new Date().toISOString();\ntasks[index] = updated;\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"Задача обновлена\",\n    task: updated\n});",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -2023,7 +2023,7 @@
         "type": "function",
         "z": "tab13",
         "name": "function: удалить задачу",
-        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst removed = tasks.splice(index, 1)[0];\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения\",\n    message: \"Задача удалена\",\n    deleted: removed,\n    total: tasks.length\n});",
+        "func": "function send(res, status, body) {\n    res.statusCode = status;\n    res.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    res.payload = body;\n    return res;\n}\n\nfunction badRequest(message, extra) {\n    return {\n        error: \"Bad Request\",\n        message: message,\n        student: \"Крупа Ксения (ИИ-241)\",\n        extra: extra || null\n    };\n}\n\nfunction notFound(id) {\n    return {\n        error: \"Not Found\",\n        message: \"Задача с id=\" + id + \" не найдена\",\n        student: \"Крупа Ксения (ИИ-241)\"\n    };\n}\n\nfunction validateTitle(title) {\n    if (typeof title !== \"string\") {\n        return \"Поле title обязательно и должно быть строкой\";\n    }\n    const t = title.trim();\n    if (t.length < 3 || t.length > 100) {\n        return \"Длина title должна быть от 3 до 100 символов\";\n    }\n    return null;\n}\n\nconst tasks = flow.get(\"krupa_tasks\") || [];\nconst id = Number(msg.req.params.id);\n\nif (!Number.isInteger(id)) {\n    return send(msg, 400, badRequest(\"id должен быть целым числом\", { received: msg.req.params.id }));\n}\n\nconst index = tasks.findIndex(function (t) { return t.id === id; });\nif (index === -1) {\n    return send(msg, 404, notFound(id));\n}\n\nconst removed = tasks.splice(index, 1)[0];\nflow.set(\"krupa_tasks\", tasks);\n\nreturn send(msg, 200, {\n    student: \"Крупа Ксения (ИИ-241)\",\n    message: \"Задача удалена\",\n    deleted: removed,\n    total: tasks.length\n});",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,

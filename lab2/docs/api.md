@@ -1,6 +1,6 @@
 # API лабораторной работы №2 (Node-RED)
 
-**Студент:** Крупа Ксения
+**Студент:** Крупа Ксения, группа ИИ-241
 **Способ установки:** Docker (образ `nodered/node-red`), порт `1880`, volume на `/data`
 **Базовый URL:** `http://localhost:1880`
 **Формат:** JSON (`Content-Type: application/json; charset=utf-8`), кроме `/api/text`.
@@ -94,7 +94,7 @@ curl.exe -i http://localhost:1880/api/info
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "lab": 2
 }
 ```
@@ -120,7 +120,7 @@ curl.exe -i "http://localhost:1880/api/items?limit=2"
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "lab": 2,
   "appliedLimit": 2,
   "appliedCategory": null,
@@ -142,7 +142,7 @@ curl.exe -i "http://localhost:1880/api/items?category=fruit&limit=5"
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "lab": 2,
   "appliedLimit": 5,
   "appliedCategory": "fruit",
@@ -170,7 +170,7 @@ curl.exe -i "http://localhost:1880/api/items?limit=abc"
   "error": "Bad Request",
   "message": "Параметр limit должен быть целым числом от 1 до 5",
   "received": "99",
-  "student": "Крупа Ксения"
+  "student": "Крупа Ксения (ИИ-241)"
 }
 ```
 
@@ -192,7 +192,7 @@ curl.exe -i http://localhost:1880/api/items/3
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "lab": 2,
   "item": { "id": 3, "name": "Клавиатура", "category": "tech", "price": 80 }
 }
@@ -211,7 +211,7 @@ curl.exe -i http://localhost:1880/api/items/abc
   "error": "Bad Request",
   "message": "id должен быть целым числом",
   "received": "abc",
-  "student": "Крупа Ксения"
+  "student": "Крупа Ксения (ИИ-241)"
 }
 ```
 
@@ -228,7 +228,7 @@ curl.exe -i http://localhost:1880/api/items/42
   "error": "Not Found",
   "message": "Товар с id=42 не найден",
   "availableIds": [1, 2, 3, 4, 5],
-  "student": "Крупа Ксения"
+  "student": "Крупа Ксения (ИИ-241)"
 }
 ```
 
@@ -268,7 +268,7 @@ curl.exe -i "http://localhost:1880/api/tasks?done=false"
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "lab": 2,
   "total": 3,
   "count": 1,
@@ -293,7 +293,7 @@ curl.exe -i "http://localhost:1880/api/tasks?done=yes"
 {
   "error": "Bad Request",
   "message": "Параметр done должен быть true или false",
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "extra": { "received": "yes" }
 }
 ```
@@ -308,7 +308,7 @@ curl.exe -i http://localhost:1880/api/tasks/2
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "lab": 2,
   "task": {
     "id": 2,
@@ -329,7 +329,7 @@ curl.exe -i http://localhost:1880/api/tasks/999
 {
   "error": "Not Found",
   "message": "Задача с id=999 не найдена",
-  "student": "Крупа Ксения"
+  "student": "Крупа Ксения (ИИ-241)"
 }
 ```
 
@@ -353,7 +353,7 @@ curl -i -X POST http://localhost:1880/api/tasks \
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "message": "Задача создана",
   "task": {
     "id": 4,
@@ -384,7 +384,7 @@ Invoke-RestMethod -Method Post -Uri http://localhost:1880/api/tasks `
 {
   "error": "Bad Request",
   "message": "Длина title должна быть от 3 до 100 символов",
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "extra": { "received": "ok" }
 }
 ```
@@ -408,7 +408,7 @@ curl -i -X PATCH http://localhost:1880/api/tasks/3 \
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "message": "Задача обновлена",
   "task": {
     "id": 3,
@@ -431,7 +431,7 @@ curl -i -X PATCH http://localhost:1880/api/tasks/3 \
 {
   "error": "Bad Request",
   "message": "Нужно передать хотя бы одно поле: title или done",
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "extra": null
 }
 ```
@@ -448,7 +448,7 @@ curl.exe -i -X DELETE http://localhost:1880/api/tasks/4
 
 ```json
 {
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "message": "Задача удалена",
   "deleted": {
     "id": 4,
@@ -470,7 +470,7 @@ curl.exe -i -X DELETE http://localhost:1880/api/tasks/4
 {
   "error": "Not Found",
   "message": "Задача с id=4 не найдена",
-  "student": "Крупа Ксения"
+  "student": "Крупа Ксения (ИИ-241)"
 }
 ```
 

@@ -31,6 +31,7 @@ $ErrorActionPreference = 'Stop'
 $LabDir    = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $DataDir   = Join-Path $LabDir 'node-red-data'
 $FlowsFile = Join-Path $LabDir 'flows\flows.json'
+$EnvFile   = Join-Path $LabDir 'scripts\lab2.env'
 $BaseUrl   = "http://localhost:$Port"
 
 function Step($text) { Write-Host "`n=== $text ===" -ForegroundColor Cyan }
@@ -64,8 +65,7 @@ Step 'Запускаю контейнер'
 docker run -d --name $Container `
     -p "${Port}:1880" `
     -v "${DataDir}:/data" `
-    -e LAB2_STUDENT=Krupa `
-    -e LAB2_LAB=2 `
+    --env-file $EnvFile `
     --restart unless-stopped `
     $Image | Out-Null
 

@@ -1,6 +1,6 @@
 # Отчёт по лабораторной работе №2 — Node-RED
 
-**Студент:** Крупа Ксения, ГрГУ им. Я. Купалы
+**Студент:** Крупа Ксения, группа ИИ-241, ГрГУ им. Я. Купалы
 **Дисциплина:** Технологии визуального программирования
 **Тема:** Node-RED как low-code инструмент
 **Репозиторий:** `visual-programming-labs-Krupa`, каталог `lab2/`
@@ -14,9 +14,51 @@
 | Часть 1. Установка и запуск | Node-RED запущен в Docker-контейнере, порт `1880`, volume `lab2/node-red-data` → `/data`. Собран и задеплоен поток `inject → debug` |
 | Часть 2. Ноды и потоки | Собраны все 12 потоков из пунктов 2.1–2.12 — каждый лежит отдельным файлом в `lab2/flows/` |
 | Часть 3. Ачивка | **Ачивка №5. REST+ (полный CRUD)** — потоки `flow-13-rest-crud.json` |
-| Часть 4. Отчёт | Этот файл, [`api.md`](api.md), чек-лист скриншотов, 8 осмысленных коммитов |
+| Часть 4. Отчёт | Этот файл, [`api.md`](api.md), чек-лист скриншотов, 11 осмысленных коммитов |
 
 Всего: **13 потоков, 116 нод**, 9 HTTP-эндпоинтов, 2 внешние интеграции (публичный HTTP API и публичный MQTT-брокер).
+
+### 1.1. Как обеспечена уникальность работы
+
+Задание требует использовать **фамилию и группу** студента в `msg.topic`, именах,
+payload и названиях потоков. Применена такая схема:
+
+| Где | Как выглядит |
+|-----|--------------|
+| `msg.topic` | `lab2/krupa-ii241/basic`, `lab2/krupa-ii241/function`, … |
+| Топик MQTT | `student/krupa-ii241/lab2/sensor` |
+| Названия потоков (вкладок редактора) | `01 · inject → debug (ИИ-241)` — во всех 13 |
+| Подписи на полотне (ноды `comment`) | `2.1 inject → debug · ИИ-241` — во всех 13 |
+| `msg.payload` и ответы API | `"student": "Крупа Ксения (ИИ-241)"` — 40 мест |
+| Имена inject-нод | `Каждые 5 сек: Крупа Ксения (ИИ-241)` |
+| Файл лога из 2.11 | `/data/krupa-ii241-log.jsonl` |
+| Имя Telegram-бота | `tvl_lab2_krupa_bot` — здесь шаблон задания задаёт только фамилию |
+
+Почему в топиках, URL и именах файлов стоит латинский слаг `krupa-ii241`,
+а не `Крупа-ИИ-241`: кириллица в MQTT-топике формально допустима, но ломается
+при работе с частью брокеров и утилит, которые ожидают ASCII. Поэтому топик и путь
+к файлу сделаны латиницей, а во всех читаемых местах (имена нод, подписи, payload,
+ответы API) используется полный вариант **«Крупа Ксения (ИИ-241)»**.
+
+Отдельно про эндпоинт `GET /api/info`: по заданию он обязан возвращать JSON
+**ровно с двумя полями**. Чтобы требование не нарушить и при этом показать и фамилию,
+и группу, оба значения объединены в одном поле:
+
+```json
+{
+  "student": "Крупа Ксения (ИИ-241)",
+  "lab": 2
+}
+```
+
+Так формат ответа остаётся единообразным: во всех остальных эндпоинтах поле
+`student` содержит то же значение.
+
+Группа также передаётся контейнеру переменной окружения `LAB2_GROUP` (поток 2.12
+показывает её в Debug) — файл `lab2/scripts/lab2.env`, подключается через
+`docker run --env-file`. Переменные передаются файлом в UTF-8, а не флагами `-e`:
+в командной строке Windows русский текст проходит через ANSI-кодировку и доходит
+до контейнера искажённым.
 
 ---
 
@@ -135,7 +177,7 @@ CONTAINER ID   IMAGE                     STATUS                    PORTS        
 
 ### 4.1. Inject → Debug (`flow-01-inject-debug.json`)
 
-Inject раз в 5 секунд кладёт в `msg.payload` строку `Крупа Ксения`, а в `msg.topic` — `lab2/krupa/basic`.
+Inject раз в 5 секунд кладёт в `msg.payload` строку `Крупа Ксения`, а в `msg.topic` — `lab2/krupa-ii241/basic`.
 Debug переключён с режима «только `msg.payload`» на **complete msg object**, поэтому в панели видно весь объект: `payload`, `topic`, `_msgid`.
 
 ![2.1 inject → debug](../screenshots/01-inject-debug.png)
@@ -199,7 +241,7 @@ Change-нода выполняет четыре операции `Set`:
 
 | № | Свойство | Значение | Тип |
 |---|----------|----------|-----|
-| 1 | `msg.topic` | `lab2/krupa/change` | строка |
+| 1 | `msg.topic` | `lab2/krupa-ii241/change` | строка |
 | 2 | `msg.timestamp` | текущее время | timestamp |
 | 3 | `msg.changedBy` | `Крупа Ксения` | строка |
 | 4 | `msg.payload` | `"Крупа Ксения \| lab2 \| было: " & $string(payload)` | JSONata |
@@ -216,7 +258,7 @@ Inject отдаёт объект с полями `student`, `lab`, `sensor`, `va
 {
   "student": "{{payload.student}}",
   "lab": {{payload.lab}},
-  "topic": "lab2/krupa/template",
+  "topic": "lab2/krupa-ii241/template",
   "measurement": {
     "sensor": "{{payload.sensor}}",
     "value": {{payload.value}},
@@ -240,7 +282,7 @@ Inject отдаёт объект с полями `student`, `lab`, `sensor`, `va
 ### 4.7. MQTT с публичным брокером (`flow-07-mqtt.json`)
 
 * Брокер: `broker.hivemq.com:1883` (публичный, без авторизации). Альтернатива из задания — `test.mosquitto.org:1883`.
-* Топик: `student/krupa/lab2/sensor`.
+* Топик: `student/krupa-ii241/lab2/sensor`.
 * **Ветка публикации:** inject раз в 5 секунд → function, которая формирует случайное «показание датчика» 18…30 °C → `mqtt out`.
 * **Ветка подписки:** `mqtt in` на тот же топик → `debug`.
 
@@ -285,7 +327,7 @@ Inject отдаёт объект с полями `student`, `lab`, `sensor`, `va
 * Группа: **«Показания датчика»**.
 * `ui_gauge` — текущее значение, шкала 0…40 °C, цветовые сегменты (зелёный → жёлтый → красный).
 * `ui_chart` — история значений, линейный график, хранит 5 минут, ось `y` тоже 0…40.
-* `inject` раз в 2 секунды имитирует датчик температуры (случайное число 18…30), `function` подставляет `msg.topic = lab2/krupa/dashboard`.
+* `inject` раз в 2 секунды имитирует датчик температуры (случайное число 18…30), `function` подставляет `msg.topic = lab2/krupa-ii241/dashboard`.
 
 Значение из одной function-ноды расходится сразу в три ноды (gauge, chart, debug) — это показывает, что выход ноды можно ветвить.
 
@@ -324,11 +366,11 @@ Inject отдаёт объект с полями `student`, `lab`, `sensor`, `va
 Один поток, две ветки.
 
 **Запись:** `inject → function → file out`.
-Файл: `/data/krupa-lab2-log.jsonl`, формат **JSON Lines** — одна строка = один JSON-объект.
+Файл: `/data/krupa-ii241-log.jsonl`, формат **JSON Lines** — одна строка = один JSON-объект.
 Function-нода формирует запись и подставляет путь в `msg.filename` (в самой ноде путь стоит по умолчанию, но переопределяется из сообщения).
 
 ```json
-{"ts":"2026-01-15T12:34:56.789Z","student":"Крупа Ксения","lab":2,"sensor":"temperature","value":23.7,"unit":"C"}
+{"ts":"2026-01-15T12:34:56.789Z","student":"Крупа Ксения (ИИ-241)","lab":2,"sensor":"temperature","value":23.7,"unit":"C"}
 ```
 
 **Чтение:** `inject → file in → function → debug`.
@@ -435,7 +477,7 @@ const envLab = env.get("LAB2_LAB") || "(переменная не задана)"
 {
   "error": "Bad Request",
   "message": "Длина title должна быть от 3 до 100 символов",
-  "student": "Крупа Ксения",
+  "student": "Крупа Ксения (ИИ-241)",
   "extra": { "received": "ok" }
 }
 ```
@@ -471,14 +513,14 @@ Node-RED отдаёт события панели Debug по WebSocket: `ws://lo
 
 | Пункт | Debug-нода | Результат |
 |-------|------------|-----------|
-| 2.1 | `Debug: complete msg` | `topic: lab2/krupa/basic`, `payload: "Крупа Ксения"` |
+| 2.1 | `Debug: complete msg` | `topic: lab2/krupa-ii241/basic`, `payload: "Крупа Ксения"` |
 | 2.2 | `Debug: результат функции` | `inputType: "object"`, `values: [5,4,5,3]`, `avg: 4.25`, `verdict: "средний балл высокий"` |
 | 2.3 | `ВЫХОД 1: avg >= 4` | `values: [5,5,4]`, `avg: 4.67` — сработало правило `>= 4` |
 | 2.3 | `ВЫХОД 2: otherwise` | `values: [1,2,3]`, `avg: 2` — сработало `otherwise` |
-| 2.4 | `Debug: complete msg после change` | `topic: lab2/krupa/change`, JSONata собрала строку с исходным payload |
+| 2.4 | `Debug: complete msg после change` | `topic: lab2/krupa-ii241/change`, JSONata собрала строку с исходным payload |
 | 2.5 | `Debug: собранный JSON` | `summary: "temperature: 27.4 C у студента Крупа Ксения"`, `Output = parsed JSON` |
 | 2.6 | `Debug: ответ API` | пришёл объект от `api.chucknorris.io` с полями `id`, `value`, `url` |
-| 2.7 | `Debug: принято из топика` | 4 сообщения вернулись из брокера, `topic: student/krupa/lab2/sensor` |
+| 2.7 | `Debug: принято из топика` | 4 сообщения вернулись из брокера, `topic: student/krupa-ii241/lab2/sensor` |
 | 2.9 | `Debug: показания датчика` | 9 значений температуры, 18…30 °C |
 | 2.11 | `Debug: содержимое файла + статистика` | `linesTotal: 3`, `parsedOk: 3`, `avgValue: 24.17` |
 | 2.12 | `Debug: контекст` | счётчик растёт, `historyLength: 5` (журнал обрезается) |
@@ -494,21 +536,21 @@ Node-RED отдаёт события панели Debug по WebSocket: `ws://lo
 
 ```
 CONNECTED to broker.hivemq.com:1883
-RECEIVED topic=student/krupa/lab2/sensor
-payload={"student":"Крупа Ксения","lab":2,"sensor":"temperature","value":24.5,"unit":"C","ts":"2026-10-08T19:04:34.971Z"}
+RECEIVED topic=student/krupa-ii241/lab2/sensor
+payload={"student":"Крупа Ксения (ИИ-241)","lab":2,"sensor":"temperature","value":24.5,"unit":"C","ts":"2026-10-08T19:04:34.971Z"}
 ```
 
 Сторонний клиент получил сообщение — значит публикация в 2.7 работает по-настоящему.
 
 ### 6.3. Файл переживает перезапуск
 
-1. Ветку записи дёрнули три раза — в `lab2/node-red-data/krupa-lab2-log.jsonl` появились 3 строки.
+1. Ветку записи дёрнули три раза — в `lab2/node-red-data/krupa-ii241-log.jsonl` появились 3 строки.
 2. `docker restart krupa-lab2-nodered`.
 3. После запуска дёрнули ветку чтения:
 
 ```json
 {
-  "file": "/data/krupa-lab2-log.jsonl",
+  "file": "/data/krupa-ii241-log.jsonl",
   "linesTotal": 3,
   "parsedOk": 3,
   "firstEntry": { "value": 28.8 },

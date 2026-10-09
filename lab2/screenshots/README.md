@@ -14,7 +14,7 @@
 | `04-change.png` | Вкладка `04 · change`, в Debug видны новые `topic`, `timestamp`, `changedBy`, `payload` |
 | `05-template.png` | Вкладка `05 · template`, в Debug — собранный JSON-объект |
 | `06-http-request.png` | Вкладка `06 · http request`, в Debug — ответ публичного API |
-| `07-mqtt.png` | Вкладка `07 · mqtt`, в Debug — сообщение, вернувшееся из топика `student/krupa/lab2/sensor` |
+| `07-mqtt.png` | Вкладка `07 · mqtt`, в Debug — сообщение, вернувшееся из топика `student/krupa-ii241/lab2/sensor` |
 | `08-endpoints.png` | Вкладка `08 · GET endpoints` целиком (все 4 пары http in/response) |
 | `08a-api-text.png` | Браузер: `http://localhost:1880/api/text` |
 | `08b-api-info.png` | Браузер: `http://localhost:1880/api/info` |

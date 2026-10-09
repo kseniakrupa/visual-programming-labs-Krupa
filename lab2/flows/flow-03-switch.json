@@ -2,7 +2,7 @@
     {
         "id": "tab03",
         "type": "tab",
-        "label": "03 · switch",
+        "label": "03 · switch (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,7 +11,7 @@
         "id": "f03_note",
         "type": "comment",
         "z": "tab03",
-        "name": "2.3 Switch node",
+        "name": "2.3 Switch node · ИИ-241",
         "info": "Та же функция, что в 2.2. Switch ветвит по msg.payload.avg: правило 1 = avg >= 4, правило 2 = otherwise. Два debug на разные выходы.",
         "x": 160,
         "y": 60,
@@ -25,7 +25,7 @@
         "props": [
             {
                 "p": "payload",
-                "v": "{\"student\":\"Крупа Ксения\",\"scores\":[5,5,4]}",
+                "v": "{\"student\":\"Крупа Ксения (ИИ-241)\",\"scores\":[5,5,4]}",
                 "vt": "json"
             }
         ],
@@ -76,7 +76,7 @@
         "type": "function",
         "z": "tab03",
         "name": "function: та же логика, что в 2.2",
-        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa/function\";\nmsg.student = \"Крупа Ксения\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
+        "func": "// 2.2 — Function node: базовая логика на JavaScript.\n// На вход приходит что угодно: число, строка или объект.\n// На выход уходит объект с полем payload.\n\nconst input = msg.payload;\nlet inputType = typeof input;\nlet values = [];\n\nif (Array.isArray(input)) {\n    inputType = \"array\";\n    values = input.slice();                       // массив\n} else if (input !== null && typeof input === \"object\") {\n    inputType = \"object\";\n    values = Array.isArray(input.scores) ? input.scores.slice() : [];\n} else if (typeof input === \"number\") {\n    inputType = \"number\";\n    for (let i = 1; i <= input; i++) {            // цикл for\n        values.push(i);\n    }\n} else {\n    inputType = \"string\";\n    values = String(input).split(/\\s+/).filter(Boolean).map(function (w) { return w.length; });\n}\n\nlet sum = 0;\nfor (let i = 0; i < values.length; i++) {\n    sum += values[i];\n}\nconst count = values.length;\nconst avg = count > 0 ? sum / count : 0;\n\nlet verdict = \"\";\nif (count === 0) {                                // if / else\n    verdict = \"нет данных для расчёта\";\n} else if (avg >= 4) {\n    verdict = \"средний балл высокий\";\n} else {\n    verdict = \"средний балл низкий\";\n}\n\nmsg.topic = \"lab2/krupa-ii241/function\";\nmsg.student = \"Крупа Ксения (ИИ-241)\";\nmsg.payload = {                                   // объект\n    student: msg.student,\n    inputType: inputType,\n    values: values,\n    count: count,\n    sum: sum,\n    avg: Number(avg.toFixed(2)),\n    verdict: verdict\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,

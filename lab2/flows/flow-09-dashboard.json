@@ -2,7 +2,7 @@
     {
         "id": "tab09",
         "type": "tab",
-        "label": "09 · dashboard",
+        "label": "09 · dashboard (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,7 +11,7 @@
         "id": "f09_note",
         "type": "comment",
         "z": "tab09",
-        "name": "2.9 Dashboard: gauge + chart",
+        "name": "2.9 Dashboard: gauge + chart · ИИ-241",
         "info": "Требуется модуль node-red-dashboard. Inject имитирует датчик температуры раз в 2 секунды: показание уходит в gauge и в chart. UI: http://localhost:1880/ui",
         "x": 160,
         "y": 60,
@@ -70,7 +70,7 @@
         "type": "function",
         "z": "tab09",
         "name": "function: температура 18…30 °C",
-        "func": "// Имитация датчика температуры.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"lab2/krupa/dashboard\";\nmsg.payload = value;\nreturn msg;",
+        "func": "// Имитация датчика температуры.\nconst value = Number((18 + Math.random() * 12).toFixed(1));\n\nmsg.topic = \"lab2/krupa-ii241/dashboard\";\nmsg.payload = value;\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,

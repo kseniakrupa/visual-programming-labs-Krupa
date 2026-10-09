@@ -2,7 +2,7 @@
     {
         "id": "tab06",
         "type": "tab",
-        "label": "06 · http request",
+        "label": "06 · http request (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,7 +11,7 @@
         "id": "f06_note",
         "type": "comment",
         "z": "tab06",
-        "name": "2.6 HTTP Request node",
+        "name": "2.6 HTTP Request node · ИИ-241",
         "info": "Публичный API без регистрации и токенов. Return = a parsed JSON object, поэтому дальше идёт уже готовый объект.",
         "x": 160,
         "y": 60,

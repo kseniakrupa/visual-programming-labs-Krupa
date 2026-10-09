@@ -2,7 +2,7 @@
     {
         "id": "tab04",
         "type": "tab",
-        "label": "04 · change",
+        "label": "04 · change (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,7 +11,7 @@
         "id": "f04_note",
         "type": "comment",
         "z": "tab04",
-        "name": "2.4 Change / Set node",
+        "name": "2.4 Change / Set node · ИИ-241",
         "info": "Change-нода перезаписывает topic, добавляет timestamp (текущее время), служебное поле changedBy и собирает новый payload через JSONata.",
         "x": 160,
         "y": 60,
@@ -30,7 +30,7 @@
             },
             {
                 "p": "topic",
-                "v": "lab2/krupa/pre-change",
+                "v": "lab2/krupa-ii241/pre-change",
                 "vt": "str"
             }
         ],
@@ -59,7 +59,7 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "lab2/krupa/change",
+                "to": "lab2/krupa-ii241/change",
                 "tot": "str"
             },
             {
@@ -73,14 +73,14 @@
                 "t": "set",
                 "p": "changedBy",
                 "pt": "msg",
-                "to": "Крупа Ксения",
+                "to": "Крупа Ксения (ИИ-241)",
                 "tot": "str"
             },
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "\"Крупа Ксения | lab2 | было: \" & $string(payload)",
+                "to": "\"Крупа Ксения (ИИ-241) | lab2 | было: \" & $string(payload)",
                 "tot": "jsonata"
             }
         ],

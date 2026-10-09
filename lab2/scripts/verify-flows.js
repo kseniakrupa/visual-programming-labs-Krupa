@@ -10,21 +10,24 @@
 
 const BASE = process.env.NODE_RED_URL || "http://localhost:1880";
 
-// inject-ноды, которые нужно дёрнуть, и что это за пункт задания
+// inject-ноды, которые нужно дёрнуть: [id, подпись, сколько раз нажать].
+// Ветку записи файла жмём три раза: ветке чтения нужно, чтобы файл уже был,
+// иначе file in отдаёт ошибку и сообщение дальше не идёт.
 const TRIGGERS = [
-    ["f01_inject",    "2.1  inject -> debug"],
-    ["f02_inj_num",   "2.2  function (число)"],
-    ["f02_inj_str",   "2.2  function (строка)"],
-    ["f02_inj_obj",   "2.2  function (объект)"],
-    ["f03_inj_high",  "2.3  switch (avg >= 4)"],
-    ["f03_inj_low",   "2.3  switch (avg < 4)"],
-    ["f04_inject",    "2.4  change"],
-    ["f05_inject",    "2.5  template"],
-    ["f06_inject",    "2.6  http request"],
-    ["f07_inj_pub",   "2.7  mqtt publish"],
-    ["f11_inj_read",  "2.11 file in -> function"],
-    ["f12_inj_tick",  "2.12 context"],
-    ["f12_inj_reset", "2.12 context reset"]
+    ["f01_inject",    "2.1  inject -> debug", 1],
+    ["f02_inj_num",   "2.2  function (число)", 1],
+    ["f02_inj_str",   "2.2  function (строка)", 1],
+    ["f02_inj_obj",   "2.2  function (объект)", 1],
+    ["f03_inj_high",  "2.3  switch (avg >= 4)", 1],
+    ["f03_inj_low",   "2.3  switch (avg < 4)", 1],
+    ["f04_inject",    "2.4  change", 1],
+    ["f05_inject",    "2.5  template", 1],
+    ["f06_inject",    "2.6  http request", 1],
+    ["f07_inj_pub",   "2.7  mqtt publish", 1],
+    ["f11_inj_write", "2.11 file out (записать 3 строки)", 3],
+    ["f11_inj_read",  "2.11 file in -> function", 1],
+    ["f12_inj_tick",  "2.12 context", 1],
+    ["f12_inj_reset", "2.12 context reset", 1]
 ];
 
 // debug-ноды, которые обязаны сработать
@@ -51,14 +54,16 @@ const ws = new WebSocket(BASE.replace(/^http/, "ws") + "/comms");
 ws.addEventListener("open", async () => {
     console.log("WebSocket /comms подключён\n");
 
-    for (const [id, label] of TRIGGERS) {
-        try {
-            const res = await fetch(`${BASE}/inject/${id}`, { method: "POST" });
-            console.log(`  ${id.padEnd(16)} ${res.status}   ${label}`);
-        } catch (e) {
-            console.log(`  ${id.padEnd(16)} ОШИБКА: ${e.message}`);
+    for (const [id, label, times] of TRIGGERS) {
+        for (let i = 0; i < (times || 1); i++) {
+            try {
+                const res = await fetch(`${BASE}/inject/${id}`, { method: "POST" });
+                console.log(`  ${id.padEnd(16)} ${res.status}   ${label}`);
+            } catch (e) {
+                console.log(`  ${id.padEnd(16)} ОШИБКА: ${e.message}`);
+            }
+            await new Promise((r) => setTimeout(r, 700));
         }
-        await new Promise((r) => setTimeout(r, 900));
     }
 
     console.log("\nСобираю сообщения из Debug (7 секунд, MQTT идёт через брокер)...");

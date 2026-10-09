@@ -2,7 +2,7 @@
     {
         "id": "tab10",
         "type": "tab",
-        "label": "10 · telegram",
+        "label": "10 · telegram (ИИ-241)",
         "disabled": false,
         "info": "",
         "env": []
@@ -11,7 +11,7 @@
         "id": "f10_note",
         "type": "comment",
         "z": "tab10",
-        "name": "2.10 Telegram-бот",
+        "name": "2.10 Telegram-бот · ИИ-241",
         "info": "Требуется модуль node-red-contrib-telegrambot. В настройках бота (tvl_lab2_krupa_bot) нужно вставить токен от @BotFather вместо заглушки TOKEN_FROM_BOTFATHER. Команды: /start, /help, /time + echo на любое сообщение.",
         "x": 160,
         "y": 60,
@@ -65,7 +65,7 @@
         "type": "function",
         "z": "tab10",
         "name": "function: приветствие",
-        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Привет! Я бот tvl_lab2_krupa_bot.\" + \"\\n\" +\n    \"Студент: Крупа Ксения, лабораторная №2 (Node-RED).\" + \"\\n\" +\n    \"Доступные команды: /start, /help, /time.\" + \"\\n\" +\n    \"На любое другое сообщение отвечу эхом.\"\n};\nreturn msg;",
+        "func": "// Достаём chatId до того, как перезапишем payload.\nconst chatId = msg.payload.chatId || (msg.payload.chat && msg.payload.chat.id);\nmsg.payload = {\n    chatId: chatId,\n    type: \"message\",\n    content: \"Привет! Я бот tvl_lab2_krupa_bot.\" + \"\\n\" +\n    \"Студент: Крупа Ксения (ИИ-241), лабораторная №2 (Node-RED).\" + \"\\n\" +\n    \"Доступные команды: /start, /help, /time.\" + \"\\n\" +\n    \"На любое другое сообщение отвечу эхом.\"\n};\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
