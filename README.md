@@ -17,25 +17,30 @@ visual-programming-labs-Krupa/
 |       |-- process_description.md
 |       |-- flowchart.md
 |       \-- sequence.md
-\-- lab2/                          Node-RED как low-code инструмент
+|-- lab2/                          Node-RED как low-code инструмент
+|   |-- docs/
+|   |   |-- api.md                 описание HTTP-эндпоинтов, параметров и ошибок
+|   |   \-- report.md              отчёт по работе
+|   |-- flows/                     по одному файлу на поток (меню → Import)
+|   |   |-- flow-01-inject-debug.json
+|   |   |-- flow-02-function.json
+|   |   |-- flow-03-switch.json
+|   |   |-- flow-04-change.json
+|   |   |-- flow-05-template.json
+|   |   |-- flow-06-http-request.json
+|   |   |-- flow-07-mqtt.json
+|   |   |-- flow-08-endpoints.json
+|   |   |-- flow-09-dashboard.json
+|   |   |-- flow-10-telegram.json
+|   |   |-- flow-11-files.json
+|   |   |-- flow-12-context.json
+|   |   \-- flow-13-rest-crud.json
+|   \-- screenshots/               скриншоты редактора и браузера
+\-- lab3/                          Bubble как no-code платформа
     |-- docs/
-    |   |-- api.md                 описание HTTP-эндпоинтов, параметров и ошибок
-    |   \-- report.md              отчёт по работе
-    |-- flows/                     по одному файлу на поток (меню → Import)
-    |   |-- flow-01-inject-debug.json
-    |   |-- flow-02-function.json
-    |   |-- flow-03-switch.json
-    |   |-- flow-04-change.json
-    |   |-- flow-05-template.json
-    |   |-- flow-06-http-request.json
-    |   |-- flow-07-mqtt.json
-    |   |-- flow-08-endpoints.json
-    |   |-- flow-09-dashboard.json
-    |   |-- flow-10-telegram.json
-    |   |-- flow-11-files.json
-    |   |-- flow-12-context.json
-    |   \-- flow-13-rest-crud.json
-    \-- screenshots/               скриншоты редактора и браузера
+    |   |-- report.md              отчёт по работе
+    |   \-- plan.md                чек-лист по частям 3–5 и коммитам
+    \-- screenshots/               снимки AI-генерации, редактора и Preview
 ```
 
 ## Лабораторные работы
@@ -44,6 +49,7 @@ visual-programming-labs-Krupa/
 |---|------|---------|--------------|
 | 1 | Моделирование бизнес-процессов | [`lab1/`](lab1/) | [`lab1/report.md`](lab1/report.md) |
 | 2 | Node-RED как low-code инструмент | [`lab2/`](lab2/) | [`lab2/docs/report.md`](lab2/docs/report.md), [`lab2/docs/api.md`](lab2/docs/api.md) |
+| 3 | Bubble как no-code платформа | [`lab3/`](lab3/) | [`lab3/docs/report.md`](lab3/docs/report.md) |
 
 ## Лабораторная работа №2 — кратко
 
@@ -59,3 +65,16 @@ visual-programming-labs-Krupa/
   (`lab2/krupa-ii241/...`), в именах нод, в payload и в названиях всех потоков.
 
 Подробности — в [`lab2/docs/report.md`](lab2/docs/report.md).
+
+## Лабораторная работа №3 — кратко
+
+* **Приложение:** «Трекер привычек», публичное, без регистрации, всё на
+  бесплатном плане Bubble.
+* **Dev-версия:**
+  <https://my-app-261010-81954.bubbleapps.io/version-test?debug_mode=true>
+* **Каркас:** сгенерирован AI-агентом Bubble по промпту из задания,
+  структура header + body + footer, строка «ТВП: Крупа» в футере.
+* **Ачивка:** №2 «Plugins» — сторонний плагин с элементом на странице.
+* **Уникальность:** имя и группа в заголовке, фамилия в подписи «ТВП».
+
+Подробности — в [`lab3/docs/report.md`](lab3/docs/report.md).
