@@ -70,7 +70,7 @@ AI-агент сгенерировал готовую заготовку из т
 Строка «ТВП» в подвале видна на скриншотах и подтверждает, что каркас
 сгенерирован именно по этому промпту.
 
-![Результат генерации каркаса AI-агентом](screenshots/01-prompt.png)
+![Результат генерации каркаса AI-агентом](../screenshots/01-prompt.png)
 
 ## 3. Часть 2. Исследование идеи
 
@@ -92,9 +92,9 @@ AI-агент сгенерировал готовую заготовку из т
    `Securing Your Bubble Account`, `Securing the Bubble editor`,
    `Securing Conditionals`.
 
-![Build Guide: How to Build an AI app with Bubble](screenshots/02-buildguide-1.png)
+![Build Guide: How to Build an AI app with Bubble](../screenshots/02-buildguide-1.png)
 
-![Build Guide: Bubble Security Fundamentals](screenshots/02-buildguide-2.png)
+![Build Guide: Bubble Security Fundamentals](../screenshots/02-buildguide-2.png)
 
 ### 3.2. Что показалось полезным
 
@@ -136,16 +136,16 @@ AI-агент сгенерировал готовую заготовку из т
 **До** — в блоке «Мои привычки» только счётчик всех привычек, никакой
 статистики по статусам:
 
-![До: только общий счётчик](screenshots/02-buildguide-3a.png)
+![До: только общий счётчик](../screenshots/02-buildguide-3a.png)
 
-![До: счётчик и карточки привычек](screenshots/02-buildguide-3b.png)
+![До: счётчик и карточки привычек](../screenshots/02-buildguide-3b.png)
 
 **После** — под заголовком появилась рассчитанная строка «Всего привычек:
 18, выполнено: 6»:
 
-![После: добавлена вычисляемая статистика](screenshots/02-buildguide-4a.png)
+![После: добавлена вычисляемая статистика](../screenshots/02-buildguide-4a.png)
 
-![После: то же на полном списке](screenshots/02-buildguide-4b.png)
+![После: то же на полном списке](../screenshots/02-buildguide-4b.png)
 
 ## 4. Часть 3. Ручная доработка UI
 
@@ -179,7 +179,7 @@ AI-агент сгенерировал готовую заготовку из т
 переменная `primary-color` выбирается из списка `Variables` — именно так
 значение подставляется в элемент.
 
-![Переменная primary-color применяется к кнопке](screenshots/03-global-variable.png)
+![Переменная primary-color применяется к кнопке](../screenshots/03-global-variable.png)
 
 ### 4.3. Свой стиль на основе переменной
 
@@ -190,7 +190,7 @@ AI-агент сгенерировал готовую заготовку из т
 сразу. На скриншоте панель `Style` открыта у элемента, и в списке стилей
 видно `drop new`.
 
-![Стиль drop new применён к полю периодичности](screenshots/04-style.png)
+![Стиль drop new применён к полю периодичности](../screenshots/04-style.png)
 
 ### 4.4. Готовый компонент
 
@@ -203,7 +203,7 @@ AI-агент сгенерировал готовую заготовку из т
 `Features Group` с вложенными `Feature Просто Group`, `Feature Регулярно
 Group` и `Feature Наглядно Group`.
 
-![Компонент «Почему это удобно» на странице index](screenshots/05-component.png)
+![Компонент «Почему это удобно» на странице index](../screenshots/05-component.png)
 
 ### 4.5. Карточки привычек
 
@@ -212,7 +212,7 @@ Group` и `Feature Наглядно Group`.
 карточками 12 px. Оформление одинаковое для всех карточек, потому что
 задано на уровне повторяющегося блока, а не у каждой карточки отдельно.
 
-![Карточки привычек и счётчик](screenshots/03-design.png)
+![Карточки привычек и счётчик](../screenshots/03-design.png)
 
 ## 5. Часть 4. Data и Workflows
 
@@ -235,7 +235,7 @@ Group` и `Feature Наглядно Group`.
 закрывают пункт 4.1 задания. Пятое поле `rating` добавлено позже, когда
 появился плагин звёздного рейтинга (см. раздел 8).
 
-![Data Type «Отметка выполнения» и его поля](screenshots/06-data-type.png)
+![Data Type «Отметка выполнения» и его поля](../screenshots/06-data-type.png)
 
 ### 5.2. Записи
 
@@ -243,7 +243,7 @@ Group` и `Feature Наглядно Group`.
 `App data` → `New entry`. У записей разные даты и заметки, оценки — 5, 4 и
 3, чтобы в интерфейсе было видно разное число звёзд.
 
-![Три записи в App Data](screenshots/07-data-records.png)
+![Три записи в App Data](../screenshots/07-data-records.png)
 
 ### 5.3. Страница checkins
 
@@ -251,7 +251,7 @@ Group` и `Feature Наглядно Group`.
 Страница публичная и оформлена в стиле приложения, подвал содержит
 «ТВП: Крупа». Сверху форма добавления, ниже список всех отметок.
 
-![Страница «Отметки выполнения»](screenshots/08-workflow-create.png)
+![Страница «Отметки выполнения»](../screenshots/08-workflow-create.png)
 
 Workflow на странице — каждое действие сделано отдельным workflow, всего
 семь:
@@ -282,7 +282,7 @@ Step 1: Create a new Отметка выполнения
 Step 2: Reset relevant inputs
 ```
 
-![Workflow создания отметки](screenshots/09-workflow-create.png)
+![Workflow создания отметки](../screenshots/09-workflow-create.png)
 
 ### 5.5. Read
 
@@ -304,7 +304,7 @@ Step 2: Reset relevant inputs
 кнопка «Удалить» в самом диалоге запускает удаление. Случайное нажатие по
 карточке ничего не удаляет.
 
-![Подтверждение удаления](screenshots/10-workflow-delete.png)
+![Подтверждение удаления](../screenshots/10-workflow-delete.png)
 
 ## 6. Часть 5. Ачивка 2 «Plugins»
 
@@ -333,7 +333,7 @@ Step 2: Reset relevant inputs
 * у трёх тестовых записей оценки 5, 4 и 3 — видно, что значение хранится в
   базе, а не только в элементе.
 
-![Элемент плагина «Оценка дня» в форме и в карточке](screenshots/12-plugin.png)
+![Элемент плагина «Оценка дня» в форме и в карточке](../screenshots/12-plugin.png)
 
 ### 6.3. Настройки элемента
 
@@ -459,6 +459,10 @@ visual-programming-labs-Krupa/
         ├── 08-workflow-create.png, 09-workflow-create.png, 10-workflow-delete.png
         └── 12-plugin.png
 ```
+
+Скриншоты лежат в `lab3/screenshots/`, то есть **рядом** с `docs/`, а не
+внутри неё. Поэтому в отчёте ссылки начинаются с `../screenshots/…`:
+отчёт находится в `lab3/docs/`, и `..` поднимает на уровень `lab3`.
 
 `api.md` не нужен: выбрана ачивка Plugins, а не API Connector.
 
