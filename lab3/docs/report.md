@@ -308,7 +308,7 @@ Step 2: Reset relevant inputs
 Снимок из `Preview`: три записи подтянулись из базы, данные отображаются
 как надо.
 
-![Preview: список отметок из базы](screenshots/11-preview-read.png)
+![Preview: список отметок из базы](../screenshots/11-preview-read.png)
 
 ### 5.6. Update
 
@@ -323,7 +323,7 @@ Step 2: Reset relevant inputs
 текущими значениями записи, то есть запись в popup действительно
 передаётся.
 
-![Preview: popup редактирования с заполненными полями](screenshots/11-preview-update.png)
+![Preview: popup редактирования с заполненными полями](../screenshots/11-preview-update.png)
 
 
 ### 5.7. Delete
