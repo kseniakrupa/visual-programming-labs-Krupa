@@ -1,0 +1,96 @@
+{
+  "name": "flow-09-redis",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7d86c61d-a5e7-494e-8148-a5da671c0e09",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "krupa",
+        "value": "hello from Krupa"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c27e35d3-2d89-4e53-af0d-7d0c1393e9ec",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "22b78spjPGOxxRDt",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "krupa",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "7ce570de-3d12-4a62-9e41-9ed1a16b08df",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "22b78spjPGOxxRDt",
+          "name": "Redis account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6aafec2d-839a-43c0-91d0-a9fdd92595c7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69841a1019c35e1e433a3d20592aca7834d6e71d424b213b9eb7e1da22ef7fd8"
+  },
+  "nodeGroups": [],
+  "id": "jSMlBkHmx2dEAOHp",
+  "tags": []
+}
