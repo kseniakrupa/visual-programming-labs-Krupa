@@ -20,48 +20,126 @@
 docker run -d --name n8n -p 5678:5678 -v "${PWD}\lab4\n8n-data:/home/node/.n8n" -v "${PWD}\lab4\data:/data" -e GENERIC_TIMEZONE="Europe/Moscow" -e TZ="Europe/Moscow" -e N8N_SECURE_COOKIE=false -e N8N_RUNNERS_ENABLED=true --add-host=host.docker.internal:host-gateway n8nio/n8n
 ```
 
-После старта контейнера редактор доступен на <http://localhost:5678>, выполнена
-регистрация владельца. Версия n8n — 2.44.6.
+### 1.1. Запуск редактора и версия
+
+- **Задание:** установить n8n в Docker (порт 5678, два volume), открыть
+  <http://localhost:5678> и зарегистрироваться.
+- **Что делали:** запустили контейнер командой выше, зарегистрировали владельца,
+  открыли Settings → Usage and plan.
+- **Результат:** редактор работает, Community Edition, версия n8n — 2.44.6.
 
 ![Версия n8n 2.44.6 (Settings → Usage and plan)](../screenshots/01-version.png)
 
 ## Часть 2. Изучение нод и создание workflow
 
-Были освоены и собраны следующие воркфлоу (все файлы лежат в папке `flows/`):
+Были освоены и собраны следующие воркфлоу (все файлы лежат в папке `flows/`).
+Запуск каждого — кнопкой **Execute workflow** (Manual Trigger).
 
-- `flow-01-manual-set.json` (Manual Trigger → Set → Code)
-- `flow-02-code.json` (Code с базовыми элементами JS)
-- `flow-03-if.json` (Ветвление через IF)
-- `flow-04-set.json` (Изменение полей, timestamp)
-- `flow-05-http.json` (HTTP Request к публичному API)
-- `flow-06-schedule.json` (Schedule Trigger каждые 5 минут)
+| Пункт | Что собрано | Файл workflow |
+|---|---|---|
+| 2.1 | Manual Trigger → Set → Code | `flow-01-manual-set.json` |
+| 2.2 | Manual Trigger → Code → NoOp | `flow-02-code.json` |
+| 2.3 | Manual Trigger → Code → IF → NoOp (true/false) | `flow-03-if.json` |
+| 2.4 | Manual Trigger → Set (topic, timestamp, payload) → Code | `flow-04-set.json` |
+| 2.5 | Manual Trigger → HTTP Request → Code | `flow-05-http.json` |
+| 2.6 | Schedule Trigger (каждые 5 минут) → Code | `flow-06-schedule.json` |
+
+### 2.1. Manual Trigger → Set → Code
+
+- **Задание:** собрать цепочку Manual Trigger → Set → Code; в Set задать
+  `payload` = строка с фамилией и `topic = "lab4/<фамилия>/basic"`; в Code
+  вывести полученные данные; задеплоить и выполнить вручную.
+- **Что делали:** в Set задали `payload = "Krupa"` и `topic = "lab4/krupa/basic"`;
+  в Code через `$input.all()` вывели оба поля в `console.log` и вернули те же
+  items.
+- **Результат:** все три ноды отработали, между ними по 1 item.
 
 ![flow-01: Manual Trigger → Set → Code, все ноды выполнены](../screenshots/02-manual-set.png)
 
+### 2.2. Code node
+
+- **Задание:** Manual Trigger → Code → NoOp; в Code использовать `let`/`const`,
+  `if`/`else`, цикл `for`, массив и объект; вернуть объект с полем `payload`.
+- **Что делали:** циклом `for` прошли 5 итераций, на каждой дописали тег в массив
+  `tags` (чёт/нечет через `if`/`else`) и собрали объект `result` с полями `user`,
+  `group`, `items`; вернули `payload` с количеством обработанных элементов.
+- **Результат:** `payload = "Krupa: processed 5 items (many)"`, дальше данные
+  уходят в NoOp.
+
 ![flow-02: Manual Trigger → Code → NoOp](../screenshots/03-code.png)
+
+### 2.3. IF node
+
+- **Задание:** Manual Trigger → Code → IF → (true) NoOp / (false) NoOp; в Code —
+  логика, аналогичная 2.2; в IF настроить правило ветвления.
+- **Что делали:** Code вернул тот же `payload` плюс числовое поле `score = 42`;
+  в IF задали условие `$json.score > 10` (Number → greater than).
+- **Результат:** данные ушли в ветку **true** (верхний NoOp с зелёной галочкой),
+  ветка **false** не выполнялась.
 
 ![flow-03: Manual Trigger → Code → IF → NoOp (ветки true и false)](../screenshots/04-if.png)
 
+### 2.4. Set node (изменение полей, timestamp)
+
+- **Задание:** Manual Trigger → Set → Code; в Set задать `topic`, `timestamp`
+  (текущее время) и `payload`; в Code показать complete msg object.
+- **Что делали:** в Set задали `topic = "lab4/krupa/set"`,
+  `timestamp = {{ $now.toISO() }}` (текущее время запуска),
+  `payload = "Krupa payload with timestamp"`; в Code собрали объект с полем
+  `completeMsg` и вывели его в консоль.
+- **Результат:** `Message on lab4/krupa/set at <ISO-время>: Krupa payload with timestamp`.
+
 ![flow-04: Set с полями topic, timestamp, payload → Code](../screenshots/05-set.png)
 
+### 2.5. HTTP Request node
+
+- **Задание:** Manual Trigger → HTTP Request → Code; любой публичный API без
+  регистрации и токенов, метод GET, формат ответа JSON.
+- **Что делали:** GET-запрос на `https://api.chucknorris.io/jokes/random`
+  (формат ответа оставлен автоопределением — API возвращает JSON); в Code взяли
+  первое поле ответа и вернули его как `fact`.
+- **Результат:** шутка получена, в Code ушло поле `fact` с текстом.
+
 ![flow-05: HTTP Request к api.chucknorris.io → Code](../screenshots/06-http.png)
+
+### 2.6. Schedule Trigger
+
+- **Задание:** Schedule Trigger → Code; запуск каждые 5 минут (или раз в минуту
+  для демонстрации); в Code вернуть текущее время.
+- **Что делали:** в Schedule Trigger выбрали интервал в минутах (5 по умолчанию);
+  Code возвращает `now` (ISO-время) и поясняющую строку `note`; для проверки
+  выполнили workflow вручную.
+- **Результат:** Code отдаёт текущее время, расписание настроено на каждые
+  5 минут.
 
 ![flow-06: Schedule Trigger каждые 5 минут → Code](../screenshots/07-schedule.png)
 
 ## Часть 3. Redis
 
 Redis был запущен в Docker. В n8n настроены Credentials (`host.docker.internal`,
-порт 6379).
+порт 6379). Подробности в [`redis.md`](redis.md).
 
-- `flow-09-redis.json` — создание (Set) и чтение (Get) ключа `krupa`.
-- `flow-10-redis.json` — удаление (Delete) и проверка отсутствия (Get
-  возвращает пусто) ключа `krupa`.
+### 3.1. Создание и чтение ключа (flow-09-redis)
 
-Подробности в [`redis.md`](redis.md).
+- **Задание:** Manual Trigger → Redis (Set), ключ — фамилия латиницей, значение —
+  произвольная строка → Redis (Get) прочитать этот ключ.
+- **Что делали:** в Credentials указали `host.docker.internal:6379` без пароля;
+  нода Redis (Set) пишет ключ `krupa` = `hello from Krupa`, вторая нода Redis
+  (Get) читает его.
+- **Результат:** Get вернул значение `hello from Krupa` (см. панель OUTPUT).
 
 ![flow-09: Redis Set → Redis Get](../screenshots/08-redis-setget-all.png)
 
 ![flow-09: результат Get — значение «hello from Krupa»](../screenshots/08-redis-setget-output.png)
+
+### 3.2. Удаление и проверка отсутствия (flow-10-redis)
+
+- **Задание:** Manual Trigger → Redis (Delete) удалить ключ → проверить, что
+  ключа больше нет.
+- **Что делали:** нода Redis (Delete) удаляет ключ `krupa`, затем Redis (Get)
+  читает его повторно. Отдельной операции Exists у ноды Redis в n8n нет, поэтому
+  отсутствие проверяем через Get (и Keys по шаблону).
+- **Результат:** Get вернул `null` — ключ удалён.
 
 ![flow-10: Redis Delete → Redis Get](../screenshots/09-redis-delete-all.png)
 
@@ -71,28 +149,41 @@ Redis был запущен в Docker. В n8n настроены Credentials (`h
 
 **Выбрана Ачивка 5.2: Написать Rest API для работы с заметками (хранилище — Redis).**
 
-Было реализовано два независимых воркфлоу, работающих как REST API:
+Было реализовано два независимых воркфлоу, работающих как REST API. Оба
+опубликованы (Published), поэтому доступны по production-URL.
 
-- `flow-11-achieve-rest-post.json` — принимает POST-запрос на `/webhook/notes`,
-  берет `id` и `text` из тела запроса и сохраняет их в Redis.
-- `flow-12-achieve-rest-get.json` — принимает GET-запрос на
-  `/webhook/notes?id=...`, достает заметку из Redis по ID и возвращает её
-  в ответе.
+### 4.1. POST — создание заметки (flow-11-achieve-rest-post)
 
-Оба workflow опубликованы (Published), поэтому доступны по production-URL.
+- **Задание:** REST API для заметок: принимать заметку и сохранять её в Redis.
+- **Что делали:** нода Webhook (POST, путь `notes`) принимает JSON; Redis (Set)
+  пишет ключ `{{ $json.body.id }}` со значением `{{ $json.body.text }}`;
+  Set формирует ответ `status: Created`.
+- **Результат:** заметка сохраняется в Redis, клиент получает `status: Created`.
 
-Проверка работы API осуществлялась через PowerShell (команды `Invoke-RestMethod`):
+![flow-11: Webhook (POST) → Redis Set → Edit Fields](../screenshots/10-achieve-api-post.png)
+
+### 4.2. GET — чтение заметки (flow-12-achieve-rest-get)
+
+- **Задание:** REST API для заметок: отдавать заметку по её id.
+- **Что делали:** нода Webhook (GET, путь `notes`) берёт id из query-параметра;
+  Redis (Get) читает ключ `{{ $json.query.id }}`; Set отдаёт поле `note` со
+  значением `{{ $json.propertyName }}`.
+- **Результат:** по `?id=note1` возвращается текст сохранённой заметки.
+
+![flow-12: Webhook (GET) → Redis Get → Edit Fields](../screenshots/11-achieve-api-get.png)
+
+### 4.3. Проверка API из PowerShell
+
+- **Задание:** показать, что REST API действительно работает.
+- **Что делали:** два запроса `Invoke-RestMethod` — POST создаёт заметку
+  `note1`, GET читает её по id.
+- **Результат:** POST вернул `status: Created`, GET вернул
+  `note: My first note in Redis`.
 
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:5678/webhook/notes" -Method Post -Body '{"id": "note1", "text": "My first note in Redis"}' -ContentType "application/json"
 Invoke-RestMethod -Uri "http://localhost:5678/webhook/notes?id=note1" -Method Get
 ```
-
-Ответ на POST — `status: Created`, на GET — `note: My first note in Redis`.
-
-![flow-11: Webhook (POST) → Redis Set → Edit Fields](../screenshots/10-achieve-api-post.png)
-
-![flow-12: Webhook (GET) → Redis Get → Edit Fields](../screenshots/11-achieve-api-get.png)
 
 ![Проверка API из PowerShell: POST создаёт заметку, GET возвращает её](../screenshots/12-achieve-api-powershell.png)
 
