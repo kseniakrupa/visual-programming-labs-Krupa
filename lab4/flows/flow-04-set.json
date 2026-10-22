@@ -1,0 +1,101 @@
+{
+  "name": "flow-04-set",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8dafb1f1-901d-4e93-b5be-7b689f9db979",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ea9e4e7d-e40e-4a50-b4cd-3e897c3bff76",
+              "name": "topic",
+              "value": "lab4/krupa/set",
+              "type": "string"
+            },
+            {
+              "id": "04f011a9-cea7-4a36-981e-8b40fcf3528a",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "1b2f9666-c294-43fc-88f7-da0f14dcde8e",
+              "name": "payload",
+              "value": "Krupa payload with timestamp",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8890f98c-04f5-4119-8eb8-c0f13a3cedc3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(i => {\n  const complete = {\n    ...i.json,\n    completeMsg: `Message on ${i.json.topic} at ${i.json.timestamp}: ${i.json.payload}`\n  };\n  console.log(complete.completeMsg);\n  return { json: complete };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "bd4e50e3-896f-47b1-ad1d-67e50fbb78fa",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "69943fb6-3529-4a70-a9aa-54ca1dbd4a3b",
+  "meta": {
+    "instanceId": "69841a1019c35e1e433a3d20592aca7834d6e71d424b213b9eb7e1da22ef7fd8"
+  },
+  "nodeGroups": [],
+  "id": "Lwwueb7JHizhoAPo",
+  "tags": []
+}
