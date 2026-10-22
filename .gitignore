@@ -1,2 +1,7 @@
-﻿# служебные файлы диагностики прав доступа
-.acl-recovery/
+﻿lab4/n8n-data/
+lab4/data/*
+!lab4/data/.gitkeep
+
+.DS_Store
+Thumbs.db
+.vscode/
