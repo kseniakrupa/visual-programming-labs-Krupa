@@ -1,0 +1,103 @@
+{
+  "name": "flow-11-achieve-rest-post",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "notes",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6bc5c008-8367-4ea4-8e10-ef67d2870467",
+      "name": "Webhook",
+      "webhookId": "c11be18c-189e-4aab-b699-ab507b83d3b3"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $json.body.id }}",
+        "value": "={{ $json.body.text }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "fdd0fe29-262b-4c5d-9121-39dac164d23c",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "22b78spjPGOxxRDt",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e855de50-8ebc-48bc-aa99-13aca9d7c46c",
+              "name": "status",
+              "value": "Created",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "0bb668fe-bfdc-4571-a6bc-9b413a47bb4f",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a58a7498-92d0-46f3-bd8a-acfa625a99f9",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "3SrSkWFgQ0k5MlKM",
+  "tags": []
+}

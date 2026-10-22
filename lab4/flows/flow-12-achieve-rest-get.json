@@ -1,0 +1,102 @@
+{
+  "name": "flow-12-achieve-rest-get",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "notes",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bcc4f777-0306-41bc-bc4b-a1e04d44b9bb",
+      "name": "Webhook",
+      "webhookId": "9e7abad0-75e7-49fc-8e25-d391243cb587"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "={{ $json.query.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8c460ef2-f7d0-4454-9ccd-fd911b013ac3",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "22b78spjPGOxxRDt",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96284a64-d56e-4f13-b268-d61226a777c5",
+              "name": "note",
+              "value": "={{ $json.propertyName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "a08c69ba-8488-4721-905a-e42f6dbf8af2",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ed74c2d0-e360-48b0-a701-b6a7e16d95fd",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "SIbUl8xgIH67INnl",
+  "tags": []
+}
