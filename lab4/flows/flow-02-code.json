@@ -1,0 +1,77 @@
+{
+  "name": "flow-02-code",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1059af98-627c-4cde-97d2-40423e9407a0",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "let counter = 0;\nconst tags = [];\nconst result = { user: \"Krupa\", group: \"II-241\", items: [] };\n\nfor (let i = 1; i <= 5; i++) {\n  if (i % 2 === 0) {\n    tags.push(`even-${i}`);\n  } else {\n    tags.push(`odd-${i}`);\n  }\n  counter++;\n  result.items.push({ index: i, tag: tags[tags.length - 1] });\n}\n\nconst message = counter > 3 ? \"many\" : \"few\";\n\nreturn [{\n  json: {\n    payload: `Krupa: processed ${counter} items (${message})`,\n    tags,\n    result\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -16
+      ],
+      "id": "7e8d79fb-f0d5-4718-bac5-3e00c11cc27c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        384,
+        -16
+      ],
+      "id": "9e7dc176-b1e9-4b0b-a8b3-50fcd62dc029",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "be053b8d-72e2-46a0-9beb-be7f7954515e",
+  "meta": {
+    "instanceId": "69841a1019c35e1e433a3d20592aca7834d6e71d424b213b9eb7e1da22ef7fd8"
+  },
+  "nodeGroups": [],
+  "id": "VA7bQLNZnnMrcZOM",
+  "tags": []
+}
