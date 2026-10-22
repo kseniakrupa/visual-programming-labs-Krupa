@@ -1,0 +1,63 @@
+{
+  "name": "flow-06-schedule",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "59788896-6b0c-4449-b0d4-115e4057a477",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { now: new Date().toISOString(), note: \"Krupa scheduled tick\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e92e913f-9b8c-4bd1-9efc-f98eba0c8734",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f651fc83-85eb-4ee6-8cc3-4d90719917b2",
+  "meta": {
+    "instanceId": "69841a1019c35e1e433a3d20592aca7834d6e71d424b213b9eb7e1da22ef7fd8"
+  },
+  "nodeGroups": [],
+  "id": "GSAzqsC0G4lsYS22",
+  "tags": []
+}
