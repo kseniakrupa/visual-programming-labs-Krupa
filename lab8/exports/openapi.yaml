@@ -1,0 +1,168 @@
+openapi: 3.0.3
+info:
+  title: lab8-krupa-api — трекер ML-экспериментов
+  description: |
+    Контракт бэкенда лабораторной работы №8 (Xano).
+    Уникальность: Крупа Ксения, группа ИИ-241. Префикс всех сущностей — krupa.
+  version: 1.0.0
+  contact:
+    name: Krupa
+servers:
+  - url: https://REPLACE-WITH-YOUR-INSTANCE.xano.io/api:lab8-krupa
+    description: Публичный API workspace lab8-krupa-api (подставить свой instance)
+tags:
+  - name: experiments
+  - name: projects
+paths:
+  /experiments:
+    get:
+      tags: [experiments]
+      summary: Список экспериментов с пагинацией и сортировкой
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+        - name: project_id
+          in: query
+          description: Фильтр по проекту
+          schema: { type: integer }
+        - name: is_successful
+          in: query
+          schema: { type: boolean }
+        - name: sort
+          in: query
+          description: "Поле и направление, например -run_at"
+          schema: { type: string, default: "-run_at" }
+      responses:
+        "200":
+          description: Страница экспериментов + метаданные пагинации
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/Experiment" }
+                  page: { type: integer }
+                  per_page: { type: integer }
+                  total: { type: integer }
+                  total_pages: { type: integer }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [experiments]
+      summary: Создать эксперимент
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [project_id, name, metric_name, metric_value]
+              properties:
+                project_id: { type: integer }
+                name: { type: string, maxLength: 120 }
+                metric_name: { type: string, maxLength: 40 }
+                metric_value: { type: number, format: double }
+                epochs: { type: integer, minimum: 1 }
+                is_successful: { type: boolean, default: false }
+      responses:
+        "201":
+          description: Созданная запись
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Experiment" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+  /experiments/{experiment_id}:
+    parameters:
+      - name: experiment_id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [experiments]
+      summary: Получить эксперимент по id
+      responses:
+        "200":
+          description: Запись
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Experiment" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [experiments]
+      summary: Обновить эксперимент
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                metric_value: { type: number, format: double }
+                is_successful: { type: boolean }
+      responses:
+        "200":
+          description: Обновлённая запись
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Experiment" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [experiments]
+      summary: Удалить эксперимент
+      responses:
+        "204": { description: Удалено }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /projects/{project_id}/stats:
+    parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [projects]
+      summary: Агрегированная статистика проекта (rollup)
+      responses:
+        "200":
+          description: Агрегаты по связанным записям
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project_id: { type: integer }
+                  experiments_count: { type: integer }
+                  successful_count: { type: integer }
+                  avg_metric_value: { type: number }
+                  datasets_count: { type: integer }
+                  total_dataset_rows: { type: integer }
+        "404": { $ref: "#/components/responses/NotFound" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    Unauthorized:
+      description: Нет или истёк токен
+    NotFound:
+      description: Запись не найдена
+    ValidationError:
+      description: Ошибка валидации полей
+  schemas:
+    Experiment:
+      type: object
+      properties:
+        id: { type: integer }
+        project_id: { type: integer }
+        name: { type: string }
+        metric_name: { type: string }
+        metric_value: { type: number, format: double }
+        epochs: { type: integer }
+        is_successful: { type: boolean }
+        run_at: { type: string, format: date-time }
