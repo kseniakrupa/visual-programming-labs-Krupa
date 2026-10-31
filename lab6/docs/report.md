@@ -25,7 +25,7 @@
 **Скриншот блоков Ачивки:**
 ![Ачивка 1](../screenshots/03-achievement-1.png)
 ---
-
+![Ачивка 1](../screenshots/03-achievement-2.png)
 ## 3. Экспорт
 Файл проекта `.aia` находится в папке `exports/lab6-krupa.aia`.
 
