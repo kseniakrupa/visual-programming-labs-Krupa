@@ -50,6 +50,7 @@ visual-programming-labs-Krupa/
 | 1 | Моделирование бизнес-процессов | [`lab1/`](lab1/) | [`lab1/report.md`](lab1/report.md) |
 | 2 | Node-RED как low-code инструмент | [`lab2/`](lab2/) | [`lab2/docs/report.md`](lab2/docs/report.md), [`lab2/docs/api.md`](lab2/docs/api.md) |
 | 3 | Bubble как no-code платформа | [`lab3/`](lab3/) | [`lab3/docs/report.md`](lab3/docs/report.md) |
+| 8 | Xano как no-code бэкенд | [`lab8/`](lab8/) | [`lab8/docs/report.md`](lab8/docs/report.md) |
 
 ## Лабораторная работа №2 — кратко
 
@@ -81,3 +82,17 @@ visual-programming-labs-Krupa/
 * **Уникальность:** имя и группа в заголовке, фамилия в подписи «ТВП».
 
 Подробности — в [`lab3/docs/report.md`](lab3/docs/report.md).
+
+## Лабораторная работа №8 — кратко
+
+* **Бэкенд:** `lab8-krupa-api`, трекер ML-экспериментов, 4 таблицы
+  (`krupa_member`, `krupa_project`, `krupa_experiment`, `krupa_dataset`).
+* **Связи:** три reference — `project.owner_id`, `experiment.project_id`,
+  `dataset.project_id`.
+* **Эндпоинты:** CRUD по `/experiments` (path-параметр `{experiment_id}`),
+  список с `page`/`per_page`/`sort`, агрегаты `/projects/{project_id}/stats`.
+* **Ачивки:** №2 «Пагинация и сортировка», №1 «Агрегация / Rollup».
+* **Контракт:** [`lab8/exports/openapi.yaml`](lab8/exports/openapi.yaml);
+  экспорт workspace — `lab8/exports/lab8-krupa.zip`.
+
+Подробности — в [`lab8/docs/report.md`](lab8/docs/report.md).
