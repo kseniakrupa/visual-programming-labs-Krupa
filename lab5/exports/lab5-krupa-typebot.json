@@ -1,0 +1,855 @@
+{
+  "version": "6",
+  "id": "lab5-krupa-bot",
+  "name": "lab5-krupa-bot",
+  "icon": null,
+  "folderId": null,
+  "selectedThemeTemplateId": null,
+  "resultsTablePreferences": null,
+  "events": [
+    {
+      "id": "evt-start",
+      "type": "start",
+      "graphCoordinates": {
+        "x": 0,
+        "y": -160
+      },
+      "outgoingEdgeId": "edg-start"
+    }
+  ],
+  "groups": [
+    {
+      "id": "grp-start",
+      "title": "01. Старт — приветствие",
+      "graphCoordinates": {
+        "x": 0,
+        "y": 0
+      },
+      "blocks": [
+        {
+          "id": "blk-welcome",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Привет! Я бот лабораторной работы №5.\nМеня собрала Крупа Ксения, группа ИИ-241.\nПомогу записаться на консультацию или ответить на частые вопросы."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Привет! Я бот лабораторной работы №5.\nМеня собрала Крупа Ксения, группа ИИ-241.\nПомогу записаться на консультацию или ответить на частые вопросы."
+          }
+        },
+        {
+          "id": "blk-start-choice",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "itm-rec",
+              "content": "Записаться на консультацию",
+              "outgoingEdgeId": "edg-1"
+            },
+            {
+              "id": "itm-faq",
+              "content": "Частые вопросы (FAQ)",
+              "outgoingEdgeId": "edg-2"
+            },
+            {
+              "id": "itm-about",
+              "content": "О боте",
+              "outgoingEdgeId": "edg-3"
+            }
+          ],
+          "options": {
+            "buttonLabel": "Отправить",
+            "isMultipleChoice": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "grp-name",
+      "title": "02. Знакомство — имя",
+      "graphCoordinates": {
+        "x": 0,
+        "y": 300
+      },
+      "blocks": [
+        {
+          "id": "blk-ask-name",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Как к тебе обращаться? Напиши имя."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Как к тебе обращаться? Напиши имя."
+          }
+        },
+        {
+          "id": "blk-name",
+          "type": "text input",
+          "options": {
+            "variableId": "var-name",
+            "isLong": false,
+            "labels": {
+              "placeholder": "Например, Ксения",
+              "button": "Отправить"
+            }
+          },
+          "outgoingEdgeId": "edg-4"
+        }
+      ]
+    },
+    {
+      "id": "grp-group",
+      "title": "03. Знакомство — группа",
+      "graphCoordinates": {
+        "x": 0,
+        "y": 600
+      },
+      "blocks": [
+        {
+          "id": "blk-ask-group",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Укажи свою группу в формате ИИ-241."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Укажи свою группу в формате ИИ-241."
+          }
+        },
+        {
+          "id": "blk-group",
+          "type": "text input",
+          "options": {
+            "variableId": "var-group",
+            "isLong": false,
+            "labels": {
+              "placeholder": "ИИ-241",
+              "button": "Отправить"
+            }
+          },
+          "outgoingEdgeId": "edg-5"
+        }
+      ]
+    },
+    {
+      "id": "grp-contact",
+      "title": "04. Знакомство — контакт",
+      "graphCoordinates": {
+        "x": 0,
+        "y": 900
+      },
+      "blocks": [
+        {
+          "id": "blk-ask-contact",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Оставь email для связи — администратор напишет тебе."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Оставь email для связи — администратор напишет тебе."
+          }
+        },
+        {
+          "id": "blk-contact",
+          "type": "email input",
+          "options": {
+            "variableId": "var-contact",
+            "labels": {
+              "placeholder": "you@example.com",
+              "button": "Отправить"
+            },
+            "retryMessageContent": "Похоже, это не email. Попробуй ещё раз."
+          },
+          "outgoingEdgeId": "edg-6"
+        }
+      ]
+    },
+    {
+      "id": "grp-check",
+      "title": "05. Проверка группы (Condition)",
+      "graphCoordinates": {
+        "x": 380,
+        "y": 900
+      },
+      "blocks": [
+        {
+          "id": "blk-check",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Секунду, проверяю группу…"
+                  }
+                ]
+              }
+            ],
+            "plainText": "Секунду, проверяю группу…"
+          }
+        },
+        {
+          "id": "blk-condition",
+          "type": "Condition",
+          "items": [
+            {
+              "id": "itm-cond-group",
+              "content": {
+                "logicalOperator": "AND",
+                "comparisons": [
+                  {
+                    "id": "cmp-group",
+                    "variableId": "var-group",
+                    "comparisonOperator": "Matches regex",
+                    "value": "^(ИИ|ИС|ПИ|ПО)-?[0-9]{2}$"
+                  }
+                ]
+              },
+              "outgoingEdgeId": "edg-7"
+            }
+          ],
+          "outgoingEdgeId": "edg-8"
+        }
+      ]
+    },
+    {
+      "id": "grp-ok",
+      "title": "06. Заявка принята",
+      "graphCoordinates": {
+        "x": 760,
+        "y": 900
+      },
+      "blocks": [
+        {
+          "id": "blk-ok",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Спасибо, {{Имя}}! Группа {{Группа}} подтверждена."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Спасибо, {{Имя}}! Группа {{Группа}} подтверждена."
+          }
+        },
+        {
+          "id": "blk-set-status",
+          "type": "Set variable",
+          "options": {
+            "variableId": "var-status",
+            "type": "Custom",
+            "expressionToEvaluate": "Заявка принята",
+            "isCode": false
+          },
+          "outgoingEdgeId": "edg-9"
+        },
+        {
+          "id": "blk-webhook",
+          "type": "Webhook",
+          "options": {
+            "isCustomBody": true,
+            "isExecutedOnClient": false,
+            "webhook": {
+              "url": "https://webhook.site/REPLACE-WITH-YOUR-UUID",
+              "method": "POST",
+              "headers": [
+                {
+                  "id": "hdr-1",
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"name\":\"{{Имя}}\",\"group\":\"{{Группа}}\",\"contact\":\"{{Контакт}}\",\"source\":\"typebot-lab5-krupa\"}"
+            },
+            "responseVariableMapping": [
+              {
+                "id": "map-1",
+                "variableId": "var-status",
+                "bodyPath": "$.status"
+              }
+            ]
+          },
+          "outgoingEdgeId": "edg-10"
+        },
+        {
+          "id": "blk-ok-final",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Заявка отправлена администратору. Он свяжется с тобой по адресу {{Контакт}}."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Заявка отправлена администратору. Он свяжется с тобой по адресу {{Контакт}}."
+          }
+        }
+      ]
+    },
+    {
+      "id": "grp-fail",
+      "title": "07. Группа не распознана (fallback)",
+      "graphCoordinates": {
+        "x": 380,
+        "y": 1200
+      },
+      "blocks": [
+        {
+          "id": "blk-fail",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Не узнал группу «{{Группа}}». Нужен формат вида ИИ-241."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Не узнал группу «{{Группа}}». Нужен формат вида ИИ-241."
+          }
+        },
+        {
+          "id": "blk-fail-choice",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "itm-retry",
+              "content": "Указать группу заново",
+              "outgoingEdgeId": "edg-11"
+            },
+            {
+              "id": "itm-fail-home",
+              "content": "В начало",
+              "outgoingEdgeId": "edg-12"
+            }
+          ],
+          "options": {
+            "buttonLabel": "Отправить",
+            "isMultipleChoice": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "grp-faq",
+      "title": "08. FAQ — меню",
+      "graphCoordinates": {
+        "x": 760,
+        "y": 0
+      },
+      "blocks": [
+        {
+          "id": "blk-faq",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Частые вопросы. Выбери тему:"
+                  }
+                ]
+              }
+            ],
+            "plainText": "Частые вопросы. Выбери тему:"
+          }
+        },
+        {
+          "id": "blk-faq-choice",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "itm-faq1",
+              "content": "Как записаться на консультацию?",
+              "outgoingEdgeId": "edg-13"
+            },
+            {
+              "id": "itm-faq2",
+              "content": "Что умеет этот бот?",
+              "outgoingEdgeId": "edg-14"
+            },
+            {
+              "id": "itm-faq-home",
+              "content": "В начало",
+              "outgoingEdgeId": "edg-15"
+            }
+          ],
+          "options": {
+            "buttonLabel": "Отправить",
+            "isMultipleChoice": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "grp-faq1",
+      "title": "09. FAQ — как записаться",
+      "graphCoordinates": {
+        "x": 1100,
+        "y": 0
+      },
+      "blocks": [
+        {
+          "id": "blk-faq1",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Нажми «Записаться на консультацию» в главном меню, укажи имя, группу и email. Заявка уйдёт администратору через Webhook."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Нажми «Записаться на консультацию» в главном меню, укажи имя, группу и email. Заявка уйдёт администратору через Webhook."
+          }
+        },
+        {
+          "id": "blk-faq1-choice",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "itm-faq1-more",
+              "content": "Ещё вопрос",
+              "outgoingEdgeId": "edg-16"
+            },
+            {
+              "id": "itm-faq1-home",
+              "content": "В начало",
+              "outgoingEdgeId": "edg-17"
+            }
+          ],
+          "options": {
+            "buttonLabel": "Отправить",
+            "isMultipleChoice": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "grp-faq2",
+      "title": "10. FAQ — что умеет бот",
+      "graphCoordinates": {
+        "x": 1100,
+        "y": 300
+      },
+      "blocks": [
+        {
+          "id": "blk-faq2",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Бот собирает заявки, проверяет группу регулярным выражением, сохраняет переменные и отправляет данные администратору HTTP-запросом."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Бот собирает заявки, проверяет группу регулярным выражением, сохраняет переменные и отправляет данные администратору HTTP-запросом."
+          }
+        },
+        {
+          "id": "blk-faq2-choice",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "itm-faq2-more",
+              "content": "Ещё вопрос",
+              "outgoingEdgeId": "edg-18"
+            },
+            {
+              "id": "itm-faq2-home",
+              "content": "В начало",
+              "outgoingEdgeId": "edg-19"
+            }
+          ],
+          "options": {
+            "buttonLabel": "Отправить",
+            "isMultipleChoice": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "grp-about",
+      "title": "11. О боте",
+      "graphCoordinates": {
+        "x": 760,
+        "y": 600
+      },
+      "blocks": [
+        {
+          "id": "blk-about",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Учебный чат-бот: TypeBot, лабораторная №5. Автор — Крупа Ксения, группа ИИ-241. Тема и брендинг изменены вручную, тексты на русском."
+                  }
+                ]
+              }
+            ],
+            "plainText": "Учебный чат-бот: TypeBot, лабораторная №5. Автор — Крупа Ксения, группа ИИ-241. Тема и брендинг изменены вручную, тексты на русском."
+          }
+        },
+        {
+          "id": "blk-about-choice",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "itm-about-rec",
+              "content": "Записаться на консультацию",
+              "outgoingEdgeId": "edg-20"
+            },
+            {
+              "id": "itm-about-home",
+              "content": "В начало",
+              "outgoingEdgeId": "edg-21"
+            }
+          ],
+          "options": {
+            "buttonLabel": "Отправить",
+            "isMultipleChoice": false
+          }
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "edg-start",
+      "from": {
+        "eventId": "evt-start"
+      },
+      "to": {
+        "groupId": "grp-start"
+      }
+    },
+    {
+      "id": "edg-1",
+      "from": {
+        "blockId": "blk-start-choice",
+        "itemId": "itm-rec"
+      },
+      "to": {
+        "groupId": "grp-name"
+      }
+    },
+    {
+      "id": "edg-2",
+      "from": {
+        "blockId": "blk-start-choice",
+        "itemId": "itm-faq"
+      },
+      "to": {
+        "groupId": "grp-faq"
+      }
+    },
+    {
+      "id": "edg-3",
+      "from": {
+        "blockId": "blk-start-choice",
+        "itemId": "itm-about"
+      },
+      "to": {
+        "groupId": "grp-about"
+      }
+    },
+    {
+      "id": "edg-4",
+      "from": {
+        "blockId": "blk-name"
+      },
+      "to": {
+        "groupId": "grp-group"
+      }
+    },
+    {
+      "id": "edg-5",
+      "from": {
+        "blockId": "blk-group"
+      },
+      "to": {
+        "groupId": "grp-contact"
+      }
+    },
+    {
+      "id": "edg-6",
+      "from": {
+        "blockId": "blk-contact"
+      },
+      "to": {
+        "groupId": "grp-check"
+      }
+    },
+    {
+      "id": "edg-7",
+      "from": {
+        "blockId": "blk-condition",
+        "itemId": "itm-cond-group"
+      },
+      "to": {
+        "groupId": "grp-ok"
+      }
+    },
+    {
+      "id": "edg-8",
+      "from": {
+        "blockId": "blk-condition"
+      },
+      "to": {
+        "groupId": "grp-fail"
+      }
+    },
+    {
+      "id": "edg-9",
+      "from": {
+        "blockId": "blk-set-status"
+      },
+      "to": {
+        "groupId": "grp-ok"
+      }
+    },
+    {
+      "id": "edg-10",
+      "from": {
+        "blockId": "blk-webhook"
+      },
+      "to": {
+        "groupId": "grp-ok"
+      }
+    },
+    {
+      "id": "edg-11",
+      "from": {
+        "blockId": "blk-fail-choice",
+        "itemId": "itm-retry"
+      },
+      "to": {
+        "groupId": "grp-group"
+      }
+    },
+    {
+      "id": "edg-12",
+      "from": {
+        "blockId": "blk-fail-choice",
+        "itemId": "itm-fail-home"
+      },
+      "to": {
+        "groupId": "grp-start"
+      }
+    },
+    {
+      "id": "edg-13",
+      "from": {
+        "blockId": "blk-faq-choice",
+        "itemId": "itm-faq1"
+      },
+      "to": {
+        "groupId": "grp-faq1"
+      }
+    },
+    {
+      "id": "edg-14",
+      "from": {
+        "blockId": "blk-faq-choice",
+        "itemId": "itm-faq2"
+      },
+      "to": {
+        "groupId": "grp-faq2"
+      }
+    },
+    {
+      "id": "edg-15",
+      "from": {
+        "blockId": "blk-faq-choice",
+        "itemId": "itm-faq-home"
+      },
+      "to": {
+        "groupId": "grp-start"
+      }
+    },
+    {
+      "id": "edg-16",
+      "from": {
+        "blockId": "blk-faq1-choice",
+        "itemId": "itm-faq1-more"
+      },
+      "to": {
+        "groupId": "grp-faq"
+      }
+    },
+    {
+      "id": "edg-17",
+      "from": {
+        "blockId": "blk-faq1-choice",
+        "itemId": "itm-faq1-home"
+      },
+      "to": {
+        "groupId": "grp-start"
+      }
+    },
+    {
+      "id": "edg-18",
+      "from": {
+        "blockId": "blk-faq2-choice",
+        "itemId": "itm-faq2-more"
+      },
+      "to": {
+        "groupId": "grp-faq"
+      }
+    },
+    {
+      "id": "edg-19",
+      "from": {
+        "blockId": "blk-faq2-choice",
+        "itemId": "itm-faq2-home"
+      },
+      "to": {
+        "groupId": "grp-start"
+      }
+    },
+    {
+      "id": "edg-20",
+      "from": {
+        "blockId": "blk-about-choice",
+        "itemId": "itm-about-rec"
+      },
+      "to": {
+        "groupId": "grp-name"
+      }
+    },
+    {
+      "id": "edg-21",
+      "from": {
+        "blockId": "blk-about-choice",
+        "itemId": "itm-about-home"
+      },
+      "to": {
+        "groupId": "grp-start"
+      }
+    }
+  ],
+  "variables": [
+    {
+      "id": "var-name",
+      "name": "Имя",
+      "value": null
+    },
+    {
+      "id": "var-group",
+      "name": "Группа",
+      "value": null
+    },
+    {
+      "id": "var-contact",
+      "name": "Контакт",
+      "value": null
+    },
+    {
+      "id": "var-status",
+      "name": "Статус заявки",
+      "value": null
+    }
+  ],
+  "theme": {
+    "general": {
+      "font": "Open Sans",
+      "background": {
+        "type": "Color",
+        "content": "#F6F1E9"
+      }
+    },
+    "chat": {
+      "container": {
+        "maxWidth": "800px",
+        "maxHeight": "100%",
+        "backgroundColor": "transparent"
+      },
+      "hostBubbles": {
+        "backgroundColor": "#2F6B4F",
+        "color": "#FFFFFF"
+      },
+      "guestBubbles": {
+        "backgroundColor": "#FFFFFF",
+        "color": "#27272A"
+      },
+      "buttons": {
+        "backgroundColor": "#C9A227",
+        "color": "#1F2937"
+      },
+      "inputs": {
+        "backgroundColor": "#FFFFFF",
+        "color": "#27272A",
+        "placeholderColor": "#9CA3AF"
+      }
+    },
+    "customCss": ".typebot-container { font-family: 'Open Sans', sans-serif; }"
+  },
+  "settings": {
+    "general": {
+      "isBrandingEnabled": false,
+      "isTypingEmulationEnabled": true,
+      "isInputPrefillEnabled": false
+    },
+    "typingEmulation": {
+      "enabled": true,
+      "speed": 400,
+      "maxDelay": 3,
+      "delayBetweenBubbles": 1,
+      "isDisabledOnFirstMessage": true
+    },
+    "metadata": {
+      "title": "lab5-krupa-bot",
+      "description": "Бот записи на консультацию — лабораторная №5, Крупа Ксения, ИИ-241"
+    }
+  }
+}
